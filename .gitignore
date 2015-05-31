@@ -1,0 +1,8 @@
+# Data files
+*.gz
+
+# Python
+*.pyc
+
+# Mac OS X custom attribute files
+.DS_Store
