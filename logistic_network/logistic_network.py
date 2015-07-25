@@ -76,7 +76,7 @@ class LogisticNetwork(object):
         This is the L2 regularization parameter that we use to penalize large
         values for components of W, thus discouraging potential overfitting
         """
-        # Calculate the log propbabilities of the softmax output
+        # Calculate the log probabilities of the softmax output
         log_probabilities = T.log(self.output)
 
         # We use these log probabilities to compute the negative log likelihood
