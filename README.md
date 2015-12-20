@@ -9,6 +9,7 @@ This repository is the code companion to my book "Fundamentals of Deep Learning"
 - Logistic Regression [port from theano]
 - Multilayer Perceptron [port from theano]
 - Convolutional Network
+- Neural Style
 - Autoencoder
 - Denoising Autoencoder
 - Convolutional Autoencoder
