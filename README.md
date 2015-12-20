@@ -1,6 +1,6 @@
 # Fundamentals of Deep Learning
 
-This repository is the code companion to my book "Fundamentals of Deep Learning"
+This repository is the code companion to my book "Fundamentals of Deep Learning." All algorithms are implemented in [Tensorflow](https://www.tensorflow.org/ "Tensorflow"), Google's new machine intelligence library. 
 
 ## TODO
 
