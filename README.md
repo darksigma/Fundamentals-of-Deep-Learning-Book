@@ -1,4 +1,4 @@
-# Fundamentals-of-Deep-Learning-Book
+# Fundamentals of Deep Learning
 
 This repository is the code companion to my book "Fundamentals of Deep Learning"
 
