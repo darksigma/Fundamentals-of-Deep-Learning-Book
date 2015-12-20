@@ -29,7 +29,7 @@ This repository is the code companion to my book "Fundamentals of Deep Learning.
 ### Embedding
 
 - Word2Vec
-- Skip-grame/CBoW
+- Skip-gram/CBoW
 - GloVe
 - Skip-thought Vectors
 
