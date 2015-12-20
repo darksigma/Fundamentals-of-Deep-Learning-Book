@@ -9,6 +9,9 @@ This repository is the code companion to my book "Fundamentals of Deep Learning"
 - Logistic Regression [port from theano]
 - Multilayer Perceptron [port from theano]
 - Convolutional Network
+- Autoencoder
+- Denoising Autoencoder
+- Convolutional Autoencoder
 - RNN
 - LSTM Network
 - GRU Network
@@ -17,6 +20,10 @@ This repository is the code companion to my book "Fundamentals of Deep Learning"
 - Memory Networks
 - Pointer Networks
 - Neural Turing Machines
+- DQN
+- LSTM-DQN
+- Deep Convolutional Inverse Graphics Network
+- Highway Networks
 
 ### Embedding
 
