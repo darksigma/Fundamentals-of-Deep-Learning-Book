@@ -26,7 +26,7 @@ This repository is the code companion to my book "Fundamentals of Deep Learning.
 - LSTM-DQN
 - Deep Convolutional Inverse Graphics Network
 - Highway Networks
-- Deep Residual Learning
+- Deep Residual Networks
 
 ### Embedding
 
