@@ -6,8 +6,8 @@ This repository is the code companion to my book "Fundamentals of Deep Learning.
 
 ### Networks
 
-- Logistic Regression [port from theano] (Nikhil)
-- Multilayer Perceptron [port from theano] (Nikhil)
+- Logistic Regression (Nikhil)
+- Multilayer Perceptron (Nikhil)
 - Convolutional Network (Nikhil)
 - Neural Style
 - Autoencoder (Hassan)
