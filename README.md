@@ -6,19 +6,19 @@ This repository is the code companion to my book "Fundamentals of Deep Learning.
 
 ### Networks
 
-- Logistic Regression [port from theano]
-- Multilayer Perceptron [port from theano]
-- Convolutional Network
+- Logistic Regression [port from theano] (Nikhil)
+- Multilayer Perceptron [port from theano] (Nikhil)
+- Convolutional Network (Nikhil)
 - Neural Style
-- Autoencoder
-- Denoising Autoencoder
-- Convolutional Autoencoder
-- RNN
-- LSTM Network
-- GRU Network
-- LSTM + Attention
-- RCNN (recurrent convolutional networks)
-- Memory Networks
+- Autoencoder (Hassan)
+- Denoising Autoencoder (Hassan)
+- Convolutional Autoencoder (Hassan)
+- RNN (Nikhil)
+- LSTM Network (Nikhil)
+- GRU Network (Nikhil)
+- LSTM + Attention (Nikhil)
+- RCNN (Nikhil)
+- Memory Networks (Nikhil)
 - Pointer Networks
 - Neural Turing Machines
 - Neural Programmer
@@ -30,10 +30,10 @@ This repository is the code companion to my book "Fundamentals of Deep Learning.
 
 ### Embedding
 
-- Word2Vec
+- Word2Vec (Nikhil)
 - Skip-gram/CBoW
-- GloVe
-- Skip-thought Vectors
+- GloVe (Nikhil)
+- Skip-thought Vectors (Nikhil)
 
 ### Optimizers
 
