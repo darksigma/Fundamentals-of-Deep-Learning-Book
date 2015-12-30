@@ -21,10 +21,12 @@ This repository is the code companion to my book "Fundamentals of Deep Learning.
 - Memory Networks
 - Pointer Networks
 - Neural Turing Machines
+- Neural Programmer
 - DQN
 - LSTM-DQN
 - Deep Convolutional Inverse Graphics Network
 - Highway Networks
+- Deep Residual Learning
 
 ### Embedding
 
