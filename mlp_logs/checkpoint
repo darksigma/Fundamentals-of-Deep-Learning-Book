@@ -1,0 +1,6 @@
+model_checkpoint_path: "mlp_logs/model-checkpoint-195250"
+all_model_checkpoint_paths: "mlp_logs/model-checkpoint-193050"
+all_model_checkpoint_paths: "mlp_logs/model-checkpoint-193600"
+all_model_checkpoint_paths: "mlp_logs/model-checkpoint-194150"
+all_model_checkpoint_paths: "mlp_logs/model-checkpoint-194700"
+all_model_checkpoint_paths: "mlp_logs/model-checkpoint-195250"
