@@ -2,15 +2,14 @@ import input_data
 mnist = input_data.read_data_sets("data/", one_hot=True)
 
 import tensorflow as tf
-import time
+import time, argparse
 
 # Architecture
 n_hidden_1 = 256
 n_hidden_2 = 256
 
 # Parameters
-learning_rate = 0.01
-training_epochs = 1000
+training_epochs = 500
 batch_size = 100
 display_step = 1
 
@@ -40,10 +39,19 @@ def loss(output, y):
     loss = tf.reduce_mean(xentropy)
     return loss
 
-def training(cost, global_step):
+def training(cost, global_step, optimizer):
     tf.scalar_summary("cost", cost)
-    optimizer = tf.train.GradientDescentOptimizer(learning_rate)
-    train_op = optimizer.minimize(cost, global_step=global_step)
+    train_op = None
+    print optimizer
+    if optimizer == "sgd":
+        learning_rate = 0.01
+        optimizer = tf.train.GradientDescentOptimizer(learning_rate)
+        train_op = optimizer.minimize(cost, global_step=global_step)
+    if optimizer == "momentum":
+        learning_rate = 0.01
+        momentum = 0.9
+        optimizer = tf.train.MomentumOptimizer(learning_rate, momentum)
+        train_op = optimizer.minimize(cost, global_step=global_step)
     return train_op
 
 
@@ -54,6 +62,10 @@ def evaluate(output, y):
     return accuracy
 
 if __name__ == '__main__':
+
+    parser = argparse.ArgumentParser(description='Test various optimization strategies')
+    parser.add_argument('optimizer', nargs=1, type=str)
+    args = parser.parse_args()
 
     with tf.Graph().as_default():
 
@@ -69,7 +81,7 @@ if __name__ == '__main__':
 
             global_step = tf.Variable(0, name='global_step', trainable=False)
 
-            train_op = training(cost, global_step)
+            train_op = training(cost, global_step, args.optimizer[0])
 
             eval_op = evaluate(output, y)
 
@@ -79,7 +91,7 @@ if __name__ == '__main__':
 
             sess = tf.Session()
 
-            summary_writer = tf.train.SummaryWriter("mlp_logs/",
+            summary_writer = tf.train.SummaryWriter("mlp_logs_%s/" % args.optimizer[0],
                                                 graph_def=sess.graph_def)
 
             
@@ -113,7 +125,7 @@ if __name__ == '__main__':
                     summary_str = sess.run(summary_op, feed_dict={x: minibatch_x, y: minibatch_y})
                     summary_writer.add_summary(summary_str, sess.run(global_step))
 
-                    saver.save(sess, "mlp_logs/model-checkpoint", global_step=global_step)
+                    saver.save(sess, "mlp_logs_%s/model-checkpoint" % args.optimizer[0], global_step=global_step)
 
 
             print "Optimization Finished!"
