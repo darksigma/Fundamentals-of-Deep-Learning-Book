@@ -79,68 +79,70 @@ def evaluate(output, y):
 
 if __name__ == '__main__':
 
-    with tf.Graph().as_default():
+    with tf.device("/gpu:0"):
 
-        with tf.variable_scope("mnist_conv_model"):
+        with tf.Graph().as_default():
 
-            x = tf.placeholder("float", [None, 784]) # mnist data image of shape 28*28=784
-            y = tf.placeholder("float", [None, 10]) # 0-9 digits recognition => 10 classes
-            keep_prob = tf.placeholder(tf.float32) # dropout probability
+            with tf.variable_scope("mnist_conv_model"):
 
-            output = inference(x, keep_prob)
+                x = tf.placeholder("float", [None, 784]) # mnist data image of shape 28*28=784
+                y = tf.placeholder("float", [None, 10]) # 0-9 digits recognition => 10 classes
+                keep_prob = tf.placeholder(tf.float32) # dropout probability
 
-            cost = loss(output, y)
+                output = inference(x, keep_prob)
 
-            global_step = tf.Variable(0, name='global_step', trainable=False)
+                cost = loss(output, y)
 
-            train_op = training(cost, global_step)
+                global_step = tf.Variable(0, name='global_step', trainable=False)
 
-            eval_op = evaluate(output, y)
+                train_op = training(cost, global_step)
 
-            summary_op = tf.merge_all_summaries()
+                eval_op = evaluate(output, y)
 
-            saver = tf.train.Saver()
+                summary_op = tf.merge_all_summaries()
 
-            sess = tf.Session()
+                saver = tf.train.Saver()
 
-            summary_writer = tf.train.SummaryWriter("conv_mnist_logs/",
-                                                graph_def=sess.graph_def)
+                sess = tf.Session()
 
-            
-            init_op = tf.initialize_all_variables()
+                summary_writer = tf.train.SummaryWriter("conv_mnist_logs/",
+                                                    graph_def=sess.graph_def)
 
-            sess.run(init_op)
+                
+                init_op = tf.initialize_all_variables()
 
-
-            # Training cycle
-            for epoch in range(training_epochs):
-
-                avg_cost = 0.
-                total_batch = int(mnist.train.num_examples/batch_size)
-                # Loop over all batches
-                for i in range(total_batch):
-                    minibatch_x, minibatch_y = mnist.train.next_batch(batch_size)
-                    # Fit training using batch data
-                    sess.run(train_op, feed_dict={x: minibatch_x, y: minibatch_y, keep_prob: 0.5})
-                    # Compute average loss
-                    avg_cost += sess.run(cost, feed_dict={x: minibatch_x, y: minibatch_y, keep_prob: 1})/total_batch
-                # Display logs per epoch step
-                if epoch % display_step == 0:
-                    print "Epoch:", '%04d' % (epoch+1), "cost =", "{:.9f}".format(avg_cost)
-
-                    accuracy = sess.run(eval_op, feed_dict={x: mnist.validation.images, y: mnist.validation.labels, keep_prob: 1})
-
-                    print "Validation Error:", (1 - accuracy)
-
-                    summary_str = sess.run(summary_op, feed_dict={x: minibatch_x, y: minibatch_y, keep_prob: 1})
-                    summary_writer.add_summary(summary_str, sess.run(global_step))
-
-                    saver.save(sess, "conv_mnist_logs/model-checkpoint", global_step=global_step)
+                sess.run(init_op)
 
 
-            print "Optimization Finished!"
+                # Training cycle
+                for epoch in range(training_epochs):
+
+                    avg_cost = 0.
+                    total_batch = int(mnist.train.num_examples/batch_size)
+                    # Loop over all batches
+                    for i in range(total_batch):
+                        minibatch_x, minibatch_y = mnist.train.next_batch(batch_size)
+                        # Fit training using batch data
+                        sess.run(train_op, feed_dict={x: minibatch_x, y: minibatch_y, keep_prob: 0.5})
+                        # Compute average loss
+                        avg_cost += sess.run(cost, feed_dict={x: minibatch_x, y: minibatch_y, keep_prob: 1})/total_batch
+                    # Display logs per epoch step
+                    if epoch % display_step == 0:
+                        print "Epoch:", '%04d' % (epoch+1), "cost =", "{:.9f}".format(avg_cost)
+
+                        accuracy = sess.run(eval_op, feed_dict={x: mnist.validation.images, y: mnist.validation.labels, keep_prob: 1})
+
+                        print "Validation Error:", (1 - accuracy)
+
+                        summary_str = sess.run(summary_op, feed_dict={x: minibatch_x, y: minibatch_y, keep_prob: 1})
+                        summary_writer.add_summary(summary_str, sess.run(global_step))
+
+                        saver.save(sess, "conv_mnist_logs/model-checkpoint", global_step=global_step)
 
 
-            accuracy = sess.run(eval_op, feed_dict={x: mnist.test.images, y: mnist.test.labels, keep_prob: 1})
+                print "Optimization Finished!"
 
-            print "Test Accuracy:", accuracy
+
+                accuracy = sess.run(eval_op, feed_dict={x: mnist.test.images, y: mnist.test.labels, keep_prob: 1})
+
+                print "Test Accuracy:", accuracy
