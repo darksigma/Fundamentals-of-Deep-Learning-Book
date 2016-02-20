@@ -6,7 +6,6 @@ step_range = 10
 momentum_range = [0.1, 0.5, 0.9, 0.99]
 
 step_choices = range(-1 * step_range, step_range + 1)
-
 rand_walk = [random.choice(step_choices) for x in xrange(100)]
 
 
