@@ -1,5 +1,6 @@
 # Data files
 *.gz
+data/
 
 # Python
 *.pyc
