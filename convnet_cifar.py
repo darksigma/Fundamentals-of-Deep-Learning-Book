@@ -134,7 +134,7 @@ if __name__ == '__main__':
                 is_train = tf.placeholder(tf.int32) # mnist data image of shape 28*28=784
                 keep_prob = tf.placeholder(tf.float32) # dropout probability
 
-                x, y = tf.cond(is_train == 1, distorted_inputs, inputs)
+                x, y = tf.cond(tf.equal(is_train, tf.constant(1, dtype=tf.int32)), distorted_inputs, inputs)
 
                 output = inference(x, keep_prob)
 
