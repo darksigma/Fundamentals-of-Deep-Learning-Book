@@ -135,9 +135,9 @@ if __name__ == '__main__':
                 train_or_eval = tf.placeholder(tf.float32) # placeholder for whether to pull from train or val data
                 keep_prob = tf.placeholder(tf.float32) # dropout probability
 
-                x, y = tf.cond(tf.greater(1.0 * train_or_eval, tf.constant(0, dtype=tf.float32)), distorted_inputs, inputs)
+                x, y = tf.cond(tf.greater(tf.constant(0, dtype=tf.float32), tf.constant(0, dtype=tf.float32)), distorted_inputs, inputs)
 
-                output = inference(x, keep_prob)
+                output = inference(x, keep_prob * train_or_eval)
 
                 cost = loss(output, y)
 
