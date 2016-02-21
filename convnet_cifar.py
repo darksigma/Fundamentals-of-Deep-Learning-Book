@@ -170,10 +170,10 @@ if __name__ == '__main__':
                     # Loop over all batches
                     for i in range(total_batch):
                         # Fit training using batch data
-                        _, new_cost = sess.run([train_op, cost], feed_dict={is_train: 1, keep_prob: 0.5})
-                        # Compute average loss
-                        avg_cost += new_cost/total_batch
-                        print "Epoch %d, minibatch %d of %d. Average cost = %0.4f." %(epoch, i, total_batch, avg_cost)
+                        _ = sess.run(train_op, feed_dict={is_train: 1, keep_prob: 0.5})
+                        # # Compute average loss
+                        # avg_cost += new_cost/total_batch
+                        # print "Epoch %d, minibatch %d of %d. Average cost = %0.4f." %(epoch, i, total_batch, avg_cost)
                     
                 #     # Display logs per epoch step
                 #     if epoch % display_step == 0:
