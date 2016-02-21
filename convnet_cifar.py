@@ -117,7 +117,7 @@ def training(cost, global_step):
 
 
 def evaluate(output, y):
-    correct_prediction = tf.equal(tf.argmax(output, 1), tf.argmax(y, 1))
+    correct_prediction = tf.equal(tf.argmax(output, 1), y)
     accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
     # tf.scalar_summary("validation error", (1.0 - accuracy))
     return accuracy
@@ -135,7 +135,7 @@ if __name__ == '__main__':
                 train_or_eval = tf.placeholder(tf.float32) # placeholder for whether to pull from train or val data
                 keep_prob = tf.placeholder(tf.float32) # dropout probability
 
-                x, y = tf.cond(tf.greater(tf.constant(0, dtype=tf.float32), tf.constant(0, dtype=tf.float32)), distorted_inputs, inputs)
+                x, y = tf.cond(tf.greater(tf.constant(1, dtype=tf.float32), tf.constant(0, dtype=tf.float32)), distorted_inputs, inputs)
 
                 output = inference(x, keep_prob * train_or_eval)
 
