@@ -110,7 +110,7 @@ def loss(output, y):
     return loss
 
 def training(cost, global_step):
-    # tf.scalar_summary("cost", cost)
+    tf.scalar_summary("cost", cost)
     optimizer = tf.train.AdamOptimizer(learning_rate)
     train_op = optimizer.minimize(cost, global_step=global_step)
     return train_op
@@ -119,7 +119,7 @@ def training(cost, global_step):
 def evaluate(output, y):
     correct_prediction = tf.equal(tf.cast(tf.argmax(output, 1), dtype=tf.int32), y)
     accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
-    # tf.scalar_summary("validation error", (1.0 - accuracy))
+    tf.scalar_summary("validation error", (1.0 - accuracy))
     return accuracy
 
 if __name__ == '__main__':
@@ -147,14 +147,14 @@ if __name__ == '__main__':
 
                 eval_op = evaluate(output, y)
 
-                # summary_op = tf.merge_all_summaries()
+                summary_op = tf.merge_all_summaries()
 
                 saver = tf.train.Saver()
 
                 sess = tf.Session()
 
-                # summary_writer = tf.train.SummaryWriter("conv_cifar_logs/",
-                #                                     graph_def=sess.graph_def)
+                summary_writer = tf.train.SummaryWriter("conv_cifar_logs/",
+                                                        graph_def=sess.graph_def)
 
                 
                 init_op = tf.initialize_all_variables()
