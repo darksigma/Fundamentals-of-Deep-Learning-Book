@@ -160,6 +160,7 @@ if __name__ == '__main__':
 
                 sess.run(init_op)
 
+                tf.train.start_queue_runners(sess=sess)
 
                 # Training cycle
                 for epoch in range(training_epochs):
@@ -172,6 +173,8 @@ if __name__ == '__main__':
                         _, new_cost = sess.run([train_op, cost], feed_dict={is_train: True, keep_prob: 0.5})
                         # Compute average loss
                         avg_cost += new_cost/total_batch
+                        print "Epoch %d, minibatch %d of %d. Average cost = %0.4f." %(epoch, i, total_batch, avg_cost)
+                    
                     # Display logs per epoch step
                     if epoch % display_step == 0:
                         print "Epoch:", '%04d' % (epoch+1), "cost =", "{:.9f}".format(avg_cost)
