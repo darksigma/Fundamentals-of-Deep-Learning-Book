@@ -131,7 +131,7 @@ if __name__ == '__main__':
 
             with tf.variable_scope("cifar_conv_model"):
 
-                is_train = tf.placeholder(tf.bool) # mnist data image of shape 28*28=784
+                is_train = tf.placeholder("bool") # mnist data image of shape 28*28=784
                 keep_prob = tf.placeholder(tf.float32) # dropout probability
 
                 x, y = tf.cond(is_train, distorted_inputs, inputs)
@@ -162,35 +162,35 @@ if __name__ == '__main__':
 
                 tf.train.start_queue_runners(sess=sess)
 
-                # # Training cycle
-                # for epoch in range(training_epochs):
+                # Training cycle
+                for epoch in range(training_epochs):
 
-                #     avg_cost = 0.
-                #     total_batch = int(cifar10_input.NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN/batch_size)
-                #     # Loop over all batches
-                #     for i in range(total_batch):
-                #         # Fit training using batch data
-                #         _, new_cost = sess.run([train_op, cost], feed_dict={is_train: True, keep_prob: 0.5})
-                #         # Compute average loss
-                #         avg_cost += new_cost/total_batch
-                #         print "Epoch %d, minibatch %d of %d. Average cost = %0.4f." %(epoch, i, total_batch, avg_cost)
+                    avg_cost = 0.
+                    total_batch = int(cifar10_input.NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN/batch_size)
+                    # Loop over all batches
+                    for i in range(total_batch):
+                        # Fit training using batch data
+                        _, new_cost = sess.run([train_op, cost], feed_dict={is_train: True, keep_prob: 0.5})
+                        # Compute average loss
+                        avg_cost += new_cost/total_batch
+                        print "Epoch %d, minibatch %d of %d. Average cost = %0.4f." %(epoch, i, total_batch, avg_cost)
                     
-                #     # Display logs per epoch step
-                #     if epoch % display_step == 0:
-                #         print "Epoch:", '%04d' % (epoch+1), "cost =", "{:.9f}".format(avg_cost)
+                    # Display logs per epoch step
+                    if epoch % display_step == 0:
+                        print "Epoch:", '%04d' % (epoch+1), "cost =", "{:.9f}".format(avg_cost)
 
-                #         accuracy = sess.run(eval_op, feed_dict={is_train: False, keep_prob: 1})
+                        accuracy = sess.run(eval_op, feed_dict={is_train: False, keep_prob: 1})
 
-                #         print "Validation Error:", (1 - accuracy)
+                        print "Validation Error:", (1 - accuracy)
 
-                #         summary_str = sess.run(summary_op, feed_dict={is_train: True, keep_prob: 0.5})
-                #         summary_writer.add_summary(summary_str, sess.run(global_step))
+                        summary_str = sess.run(summary_op, feed_dict={is_train: True, keep_prob: 0.5})
+                        summary_writer.add_summary(summary_str, sess.run(global_step))
 
-                #         saver.save(sess, "conv_cifar_logs/model-checkpoint", global_step=global_step)
+                        saver.save(sess, "conv_cifar_logs/model-checkpoint", global_step=global_step)
 
 
-                # print "Optimization Finished!"
+                print "Optimization Finished!"
 
-                # accuracy = sess.run(eval_op, feed_dict={is_train: False, keep_prob: 1})
+                accuracy = sess.run(eval_op, feed_dict={is_train: False, keep_prob: 1})
 
-                # print "Test Accuracy:", accuracy
+                print "Test Accuracy:", accuracy
