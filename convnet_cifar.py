@@ -131,10 +131,10 @@ if __name__ == '__main__':
 
             with tf.variable_scope("cifar_conv_model"):
 
-                is_train = tf.placeholder("bool") # mnist data image of shape 28*28=784
+                is_train = tf.placeholder(tf.int32) # mnist data image of shape 28*28=784
                 keep_prob = tf.placeholder(tf.float32) # dropout probability
 
-                x, y = tf.cond(is_train, distorted_inputs, inputs)
+                x, y = tf.cond(is_train == 1, distorted_inputs, inputs)
 
                 output = inference(x, keep_prob)
 
