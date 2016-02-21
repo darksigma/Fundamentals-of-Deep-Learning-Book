@@ -131,7 +131,7 @@ if __name__ == '__main__':
 
             with tf.variable_scope("cifar_conv_model"):
 
-                is_train = tf.placeholder(tf.int32) # placeholder for whether to pull from train or val data
+                train_or_eval = tf.placeholder(tf.int32) # placeholder for whether to pull from train or val data
                 keep_prob = tf.placeholder(tf.float32) # dropout probability
 
                 x, y = tf.cond(tf.equal(is_train, tf.constant(1, dtype=tf.int32)), distorted_inputs, inputs)
@@ -170,7 +170,7 @@ if __name__ == '__main__':
                     # Loop over all batches
                     for i in range(total_batch):
                         # Fit training using batch data
-                        _, new_cost = sess.run([train_op, cost], feed_dict={is_train: 1, keep_prob: 0.5})
+                        _, new_cost = sess.run([train_op, cost], feed_dict={train_or_eval: 1, keep_prob: 0.5})
                         # Compute average loss
                         avg_cost += new_cost/total_batch
                         print "Epoch %d, minibatch %d of %d. Average cost = %0.4f." %(epoch, i, total_batch, avg_cost)
