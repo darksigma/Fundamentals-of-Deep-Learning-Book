@@ -137,7 +137,7 @@ if __name__ == '__main__':
 
                 x, y = tf.cond(tf.greater(tf.constant(1, dtype=tf.float32), tf.constant(1, dtype=tf.float32)), distorted_inputs, inputs)
 
-                output = inference(x, keep_prob)
+                output = inference(x, train_or_eval)
 
                 cost = loss(output, y)
 
