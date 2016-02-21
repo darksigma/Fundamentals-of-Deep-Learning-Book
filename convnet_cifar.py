@@ -104,7 +104,7 @@ def inference(x, keep_prob):
 
 
 def loss(output, y):
-    xentropy = tf.nn.sparse_softmax_cross_entropy_with_logits(output, tf.cast(y, tf.tf.int64))    
+    xentropy = tf.nn.sparse_softmax_cross_entropy_with_logits(output, tf.cast(y, tf.int64))    
     loss = tf.reduce_mean(xentropy)
     return loss
 
