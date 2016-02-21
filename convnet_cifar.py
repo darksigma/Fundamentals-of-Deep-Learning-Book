@@ -117,7 +117,7 @@ def training(cost, global_step):
 
 
 def evaluate(output, y):
-    correct_prediction = tf.equal(tf.argmax(output, 1), y)
+    correct_prediction = tf.equal(tf.cast(tf.argmax(output, 1), dtype=tf.int32), y)
     accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
     # tf.scalar_summary("validation error", (1.0 - accuracy))
     return accuracy
