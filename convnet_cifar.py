@@ -104,7 +104,7 @@ def inference(x, keep_prob):
 
 
 def loss(output, y):
-    xentropy = tf.nn.softmax_cross_entropy_with_logits(output, y)    
+    xentropy = tf.nn.softmax_cross_entropy_with_logits(output, tf.cast(y, tf.float32))    
     loss = tf.reduce_mean(xentropy)
     return loss
 
