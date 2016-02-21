@@ -131,9 +131,10 @@ if __name__ == '__main__':
 
             with tf.variable_scope("cifar_conv_model"):
 
-                x = tf.placeholder("float", [None, 24, 24, 3]) # mnist data image of shape 28*28=784
-                y = tf.placeholder("float", [None, 10]) # 0-9 digits recognition => 10 classes
+                is_train = tf.placeholder(tf.bool) # mnist data image of shape 28*28=784
                 keep_prob = tf.placeholder(tf.float32) # dropout probability
+
+                x, y = tf.cond(is_train, distorted_inputs, inputs)
 
                 output = inference(x, keep_prob)
 
@@ -167,21 +168,19 @@ if __name__ == '__main__':
                     total_batch = int(cifar10_input.NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN/batch_size)
                     # Loop over all batches
                     for i in range(total_batch):
-                        minibatch_x, minibatch_y = distorted_inputs()
                         # Fit training using batch data
-                        sess.run(train_op, feed_dict={x: minibatch_x, y: minibatch_y, keep_prob: 0.5})
+                        _, new_cost = sess.run([train_op, cost], feed_dict={is_train: True, keep_prob: 0.5})
                         # Compute average loss
-                        avg_cost += sess.run(cost, feed_dict={x: minibatch_x, y: minibatch_y, keep_prob: 1})/total_batch
+                        avg_cost += new_cost/total_batch
                     # Display logs per epoch step
                     if epoch % display_step == 0:
                         print "Epoch:", '%04d' % (epoch+1), "cost =", "{:.9f}".format(avg_cost)
 
-                        val_x, val_y = inputs()
-                        accuracy = sess.run(eval_op, feed_dict={x: val_x, y: val_y, keep_prob: 1})
+                        accuracy = sess.run(eval_op, feed_dict={is_train: False, keep_prob: 1})
 
                         print "Validation Error:", (1 - accuracy)
 
-                        summary_str = sess.run(summary_op, feed_dict={x: minibatch_x, y: minibatch_y, keep_prob: 1})
+                        summary_str = sess.run(summary_op, feed_dict={is_train: True, keep_prob: 0.5})
                         summary_writer.add_summary(summary_str, sess.run(global_step))
 
                         saver.save(sess, "conv_cifar_logs/model-checkpoint", global_step=global_step)
@@ -189,7 +188,6 @@ if __name__ == '__main__':
 
                 print "Optimization Finished!"
 
-                test_x, test_y = inputs()
-                accuracy = sess.run(eval_op, feed_dict={x: test_x, y: test_y, keep_prob: 1})
+                accuracy = sess.run(eval_op, feed_dict={is_train: False, keep_prob: 1})
 
                 print "Test Accuracy:", accuracy
