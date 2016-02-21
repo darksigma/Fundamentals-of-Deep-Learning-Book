@@ -135,7 +135,7 @@ if __name__ == '__main__':
                 train_or_eval = tf.placeholder(tf.float32) # placeholder for whether to pull from train or val data
                 keep_prob = tf.placeholder(tf.float32) # dropout probability
 
-                x, y = tf.cond(tf.greater(train_or_eval, tf.constant(1, dtype=tf.float32)), distorted_inputs, inputs)
+                x, y = tf.cond(tf.greater(tf.constant(1, dtype=tf.float32), tf.constant(1, dtype=tf.float32)), distorted_inputs, inputs)
 
                 output = inference(x, keep_prob)
 
