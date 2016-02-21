@@ -175,22 +175,22 @@ if __name__ == '__main__':
                         avg_cost += new_cost/total_batch
                         print "Epoch %d, minibatch %d of %d. Average cost = %0.4f." %(epoch, i, total_batch, avg_cost)
                     
-                    # Display logs per epoch step
-                    if epoch % display_step == 0:
-                        print "Epoch:", '%04d' % (epoch+1), "cost =", "{:.9f}".format(avg_cost)
+                #     # Display logs per epoch step
+                #     if epoch % display_step == 0:
+                #         print "Epoch:", '%04d' % (epoch+1), "cost =", "{:.9f}".format(avg_cost)
 
-                        accuracy = sess.run(eval_op, feed_dict={is_train: 0, keep_prob: 1})
+                #         accuracy = sess.run(eval_op, feed_dict={is_train: 0, keep_prob: 1})
 
-                        print "Validation Error:", (1 - accuracy)
+                #         print "Validation Error:", (1 - accuracy)
 
-                        summary_str = sess.run(summary_op, feed_dict={is_train: 1, keep_prob: 0.5})
-                        summary_writer.add_summary(summary_str, sess.run(global_step))
+                #         summary_str = sess.run(summary_op, feed_dict={is_train: 1, keep_prob: 0.5})
+                #         summary_writer.add_summary(summary_str, sess.run(global_step))
 
-                        saver.save(sess, "conv_cifar_logs/model-checkpoint", global_step=global_step)
+                #         saver.save(sess, "conv_cifar_logs/model-checkpoint", global_step=global_step)
 
 
-                print "Optimization Finished!"
+                # print "Optimization Finished!"
 
-                accuracy = sess.run(eval_op, feed_dict={is_train: 0, keep_prob: 1})
+                # accuracy = sess.run(eval_op, feed_dict={is_train: 0, keep_prob: 1})
 
-                print "Test Accuracy:", accuracy
+                # print "Test Accuracy:", accuracy
