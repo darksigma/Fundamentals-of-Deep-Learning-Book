@@ -125,7 +125,7 @@ if __name__ == '__main__':
                         # Fit training using batch data
                         sess.run(train_op, feed_dict={x: minibatch_x, y: minibatch_y, keep_prob: 0.5})
                         # Compute average loss
-                        avg_cost += sess.run(cost, feed_dict={x: minibatch_x, y: minibatch_y, keep_prob: 1})/total_batch
+                        avg_cost += sess.run(cost, feed_dict={x: minibatch_x, y: minibatch_y, keep_prob: 0.5})/total_batch
                     # Display logs per epoch step
                     if epoch % display_step == 0:
                         print "Epoch:", '%04d' % (epoch+1), "cost =", "{:.9f}".format(avg_cost)
@@ -134,7 +134,7 @@ if __name__ == '__main__':
 
                         print "Validation Error:", (1 - accuracy)
 
-                        summary_str = sess.run(summary_op, feed_dict={x: minibatch_x, y: minibatch_y, keep_prob: 1})
+                        summary_str = sess.run(summary_op, feed_dict={x: minibatch_x, y: minibatch_y, keep_prob: 0.5})
                         summary_writer.add_summary(summary_str, sess.run(global_step))
 
                         saver.save(sess, "conv_mnist_logs/model-checkpoint", global_step=global_step)
