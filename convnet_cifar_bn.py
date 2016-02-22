@@ -211,11 +211,11 @@ if __name__ == '__main__':
 
                         val_x, val_y = sess.run([val_images, val_labels])
 
-                        accuracy = sess.run(eval_op, feed_dict={x: val_x, y: val_y, keep_prob: 1, phase_train: False}})
+                        accuracy = sess.run(eval_op, feed_dict={x: val_x, y: val_y, keep_prob: 1, phase_train: False})
 
                         print "Validation Error:", (1 - accuracy)
 
-                        summary_str = sess.run(summary_op, feed_dict={x: train_x, y: train_y, keep_prob: 1, , phase_train: False}})
+                        summary_str = sess.run(summary_op, feed_dict={x: train_x, y: train_y, keep_prob: 1, , phase_train: False})
                         summary_writer.add_summary(summary_str, sess.run(global_step))
 
                         saver.save(sess, "conv_cifar_bn_logs/model-checkpoint", global_step=global_step)
@@ -224,7 +224,7 @@ if __name__ == '__main__':
                 print "Optimization Finished!"
 
                 val_x, val_y = sess.run([val_images, val_labels])
-                accuracy = sess.run(eval_op, feed_dict={x: val_x, y: val_y, keep_prob: 1, phase_train: False}})
+                accuracy = sess.run(eval_op, feed_dict={x: val_x, y: val_y, keep_prob: 1, phase_train: False})
 
                 print "Test Accuracy:", accuracy
 
