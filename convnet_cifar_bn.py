@@ -11,7 +11,7 @@ n_hidden_1 = 256
 n_hidden_2 = 256
 
 # Parameters
-learning_rate = 0.0001
+learning_rate = 0.001
 training_epochs = 1000
 batch_size = 128
 display_step = 1
@@ -83,14 +83,15 @@ def conv2d(input, weight_shape, bias_shape, phase_train):
 def max_pool(input, k=2):
     return tf.nn.max_pool(input, ksize=[1, k, k, 1], strides=[1, k, k, 1], padding='SAME')
 
-def layer(input, weight_shape, bias_shape):
+def layer(input, weight_shape, bias_shape, phase_train):
     weight_init = tf.random_normal_initializer(stddev=(2.0/weight_shape[0])**0.5)
     bias_init = tf.constant_initializer(value=0)
     W = tf.get_variable("W", weight_shape,
                         initializer=weight_init)
     b = tf.get_variable("b", bias_shape,
                         initializer=bias_init)
-    return tf.nn.relu(tf.matmul(input, W) + b)
+    logits = tf.matmul(input, W) + b
+    return tf.nn.relu(layer_batch_norm(logits, weight_shape[1], phase_train))
 
 def inference(x, keep_prob, phase_train):
 
@@ -199,31 +200,31 @@ if __name__ == '__main__':
 
                         train_x, train_y = sess.run([distorted_images, distorted_labels])
 
-                        _, new_cost = sess.run([train_op, cost], feed_dict={x: train_x, y: train_y, keep_prob: 0.5, phase_train: True})
+                        _, new_cost = sess.run([train_op, cost], feed_dict={x: train_x, y: train_y, keep_prob: 1, phase_train: True})
                         # Compute average loss
                         avg_cost += new_cost/total_batch
                         print "Epoch %d, minibatch %d of %d. Cost = %0.4f." %(epoch, i, total_batch, new_cost)
                     
-                #     # Display logs per epoch step
-                #     if epoch % display_step == 0:
-                #         print "Epoch:", '%04d' % (epoch+1), "cost =", "{:.9f}".format(avg_cost)
+                    # Display logs per epoch step
+                    if epoch % display_step == 0:
+                        print "Epoch:", '%04d' % (epoch+1), "cost =", "{:.9f}".format(avg_cost)
 
-                #         val_x, val_y = sess.run([val_images, val_labels])
+                        val_x, val_y = sess.run([val_images, val_labels])
 
-                #         accuracy = sess.run(eval_op, feed_dict={x: val_x, y: val_y, keep_prob: 1})
+                        accuracy = sess.run(eval_op, feed_dict={x: val_x, y: val_y, keep_prob: 1, phase_train: False}})
 
-                #         print "Validation Error:", (1 - accuracy)
+                        print "Validation Error:", (1 - accuracy)
 
-                #         summary_str = sess.run(summary_op, feed_dict={x: train_x, y: train_y, keep_prob: 1})
-                #         summary_writer.add_summary(summary_str, sess.run(global_step))
+                        summary_str = sess.run(summary_op, feed_dict={x: train_x, y: train_y, keep_prob: 1, , phase_train: False}})
+                        summary_writer.add_summary(summary_str, sess.run(global_step))
 
-                #         saver.save(sess, "conv_cifar_bn_logs/model-checkpoint", global_step=global_step)
+                        saver.save(sess, "conv_cifar_bn_logs/model-checkpoint", global_step=global_step)
 
 
-                # print "Optimization Finished!"
+                print "Optimization Finished!"
 
-                # val_x, val_y = sess.run([val_images, val_labels])
-                # accuracy = sess.run(eval_op, feed_dict={x: val_x, y: val_y, keep_prob: 1})
+                val_x, val_y = sess.run([val_images, val_labels])
+                accuracy = sess.run(eval_op, feed_dict={x: val_x, y: val_y, keep_prob: 1, phase_train: False}})
 
-                # print "Test Accuracy:", accuracy
+                print "Test Accuracy:", accuracy
 
