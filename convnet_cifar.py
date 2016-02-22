@@ -133,7 +133,7 @@ if __name__ == '__main__':
             with tf.variable_scope("cifar_conv_model"):
 
                 x = tf.placeholder("float", [None, 24, 24, 3])
-                y = tf.placeholder("float", [None])
+                y = tf.placeholder("int32", [None])
                 keep_prob = tf.placeholder(tf.float32) # dropout probability
 
                 output = inference(x, keep_prob)
