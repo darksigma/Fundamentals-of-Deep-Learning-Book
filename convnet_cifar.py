@@ -136,6 +136,9 @@ if __name__ == '__main__':
                 y = tf.placeholder("int32", [None])
                 keep_prob = tf.placeholder(tf.float32) # dropout probability
 
+                distorted_images, distorted_labels = distorted_inputs()
+                val_images, val_labels = inputs()
+
                 output = inference(x, keep_prob)
 
                 cost = loss(output, y)
@@ -171,7 +174,7 @@ if __name__ == '__main__':
                     for i in range(total_batch):
                         # Fit training using batch data
 
-                        train_x, train_y = sess.run(distorted_inputs())
+                        train_x, train_y = sess.run([distorted_images, distorted_labels])
 
                         _, new_cost = sess.run([train_op, cost], feed_dict={x: train_x, y: train_y, keep_prob: 0.5})
                         # Compute average loss
@@ -182,7 +185,7 @@ if __name__ == '__main__':
                     if epoch % display_step == 0:
                         print "Epoch:", '%04d' % (epoch+1), "cost =", "{:.9f}".format(avg_cost)
 
-                        val_x, val_y = sess.run(inputs())
+                        val_x, val_y = sess.run([val_images, val_labels])
 
                         accuracy = sess.run(eval_op, feed_dict={x: train_x, y: train_y, keep_prob: 1})
 
