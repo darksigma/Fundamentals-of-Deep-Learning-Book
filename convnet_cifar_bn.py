@@ -71,7 +71,7 @@ def layer_batch_norm(x, n_out, phase_train):
         beta, gamma, 1e-3, True)
     return tf.reshape(normed, [-1, n_out])
 
-def visualize(V, weight_shape):
+def filter_summary(V, weight_shape):
     ix = weight_shape[0]
     iy = weight_shape[1]
     cx, cy = 8, 8
@@ -83,7 +83,7 @@ def conv2d(input, weight_shape, bias_shape, phase_train, visualize=False):
     weight_init = tf.random_normal_initializer(stddev=(2.0/incoming)**0.5)
     W = tf.get_variable("W", weight_shape, initializer=weight_init)
     if visualize:
-        visualize(W, weight_shape)
+        filter_summary(W, weight_shape)
     bias_init = tf.constant_initializer(value=0)
     b = tf.get_variable("b", bias_shape, initializer=bias_init)
     logits = tf.nn.bias_add(tf.nn.conv2d(input, W, strides=[1, 1, 1, 1], padding='SAME'), b)
