@@ -179,7 +179,7 @@ if __name__ == '__main__':
                         _, new_cost = sess.run([train_op, cost], feed_dict={x: train_x, y: train_y, keep_prob: 0.5})
                         # Compute average loss
                         avg_cost += new_cost/total_batch
-                        print "Epoch %d, minibatch %d of %d. Cost = %0.4f." %(epoch, i, total_batch, new_cost)
+                        # print "Epoch %d, minibatch %d of %d. Cost = %0.4f." %(epoch, i, total_batch, new_cost)
                     
                     # Display logs per epoch step
                     if epoch % display_step == 0:
