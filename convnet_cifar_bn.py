@@ -2,6 +2,7 @@ import cifar10_input
 cifar10_input.maybe_download_and_extract()
 
 import tensorflow as tf
+from tf.python import control_flow_ops
 import numpy as np
 import time, os
 
