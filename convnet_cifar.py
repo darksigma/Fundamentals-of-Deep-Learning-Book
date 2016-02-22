@@ -187,7 +187,7 @@ if __name__ == '__main__':
 
                         val_x, val_y = sess.run([val_images, val_labels])
 
-                        accuracy = sess.run(eval_op, feed_dict={x: train_x, y: train_y, keep_prob: 1})
+                        accuracy = sess.run(eval_op, feed_dict={x: val_x, y: val_y, keep_prob: 1})
 
                         print "Validation Error:", (1 - accuracy)
 
