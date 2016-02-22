@@ -45,7 +45,7 @@ def conv_batch_norm(x, n_out, phase_train):
         lambda: (ema_mean, ema_var))
 
     normed = tf.nn.batch_norm_with_global_normalization(x, mean, var,
-        beta, gamma, 1e-3, affine)
+        beta, gamma, 1e-3, True)
     return normed
 
 def layer_batch_norm(x, n_out, phase_train):
@@ -68,7 +68,7 @@ def layer_batch_norm(x, n_out, phase_train):
 
     reshaped_x = tf.reshape(x, [-1, 1, 1, n_out])
     normed = tf.nn.batch_norm_with_global_normalization(reshaped_x, mean, var,
-        beta, gamma, 1e-3, affine)
+        beta, gamma, 1e-3, True)
     return tf.reshape(normed, [-1, n_out])
 
 def conv2d(input, weight_shape, bias_shape, phase_train):
