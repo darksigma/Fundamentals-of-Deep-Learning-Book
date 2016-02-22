@@ -71,10 +71,19 @@ def layer_batch_norm(x, n_out, phase_train):
         beta, gamma, 1e-3, True)
     return tf.reshape(normed, [-1, n_out])
 
-def conv2d(input, weight_shape, bias_shape, phase_train):
+def visualize(V, weight_shape):
+    ix = weight_shape[0]
+    iy = weight_shape[1]
+    cx, cy = 8, 8
+    V_T = tf.transpose(V, (3, 0, 1, 2))
+    tf.image_summary("filters", V_T, max_images=64) 
+
+def conv2d(input, weight_shape, bias_shape, phase_train, visualize=False):
     incoming = weight_shape[0] * weight_shape[1] * weight_shape[2]
     weight_init = tf.random_normal_initializer(stddev=(2.0/incoming)**0.5)
     W = tf.get_variable("W", weight_shape, initializer=weight_init)
+    if visualize:
+        visualize(W, weight_shape)
     bias_init = tf.constant_initializer(value=0)
     b = tf.get_variable("b", bias_shape, initializer=bias_init)
     logits = tf.nn.bias_add(tf.nn.conv2d(input, W, strides=[1, 1, 1, 1], padding='SAME'), b)
@@ -96,7 +105,7 @@ def layer(input, weight_shape, bias_shape, phase_train):
 def inference(x, keep_prob, phase_train):
 
     with tf.variable_scope("conv_1"):
-        conv_1 = conv2d(x, [5, 5, 3, 64], [64], phase_train)
+        conv_1 = conv2d(x, [5, 5, 3, 64], [64], phase_train, visualize=True)
         pool_1 = max_pool(conv_1)
 
     with tf.variable_scope("conv_2"):
