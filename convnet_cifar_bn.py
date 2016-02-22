@@ -123,7 +123,7 @@ def inference(x, keep_prob, phase_train):
         fc_2_drop = tf.nn.dropout(fc_2, keep_prob)
 
     with tf.variable_scope("output"):
-        output = layer(fc_2_drop, [192, 10], [10])
+        output = layer(fc_2_drop, [192, 10], [10], phase_train)
 
     return output
 
