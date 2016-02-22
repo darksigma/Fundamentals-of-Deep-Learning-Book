@@ -132,10 +132,9 @@ if __name__ == '__main__':
 
             with tf.variable_scope("cifar_conv_model"):
 
-                train_or_eval = tf.placeholder(tf.float32) # placeholder for whether to pull from train or val data
+                x = tf.placeholder("float", [None, 784]) # mnist data image of shape 28*28=784
+                y = tf.placeholder("float", [None, 10]) # 0-9 digits recognition => 10 classes
                 keep_prob = tf.placeholder(tf.float32) # dropout probability
-
-                x, y = tf.cond(tf.greater(tf.constant(1, dtype=tf.float32), tf.constant(0, dtype=tf.float32)), distorted_inputs, inputs)
 
                 output = inference(x, keep_prob * train_or_eval)
 
@@ -171,7 +170,10 @@ if __name__ == '__main__':
                     # Loop over all batches
                     for i in range(total_batch):
                         # Fit training using batch data
-                        _, new_cost = sess.run([train_op, cost], feed_dict={keep_prob: 0.5, train_or_eval: 1.0})
+
+                        train_x, train_y = sess.run(distorted_inputs())
+
+                        _, new_cost = sess.run([train_op, cost], feed_dict={x: train_x, y: train_y, keep_prob: 0.5})
                         # Compute average loss
                         avg_cost += new_cost/total_batch
                         # print "Epoch %d, minibatch %d of %d. Cost = %0.4f." %(epoch, i, total_batch, new_cost)
@@ -180,7 +182,9 @@ if __name__ == '__main__':
                     if epoch % display_step == 0:
                         print "Epoch:", '%04d' % (epoch+1), "cost =", "{:.9f}".format(avg_cost)
 
-                        accuracy = sess.run(eval_op, feed_dict={keep_prob: 1, train_or_eval: 1.0})
+                        val_x, val_y = sess.run(inputs())
+
+                        accuracy = sess.run(eval_op, feed_dict={x: train_x, y: train_y, keep_prob: 1})
 
                         print "Validation Error:", (1 - accuracy)
 
