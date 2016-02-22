@@ -25,10 +25,19 @@ def distorted_inputs():
   return cifar10_input.distorted_inputs(data_dir=data_dir,
                                         batch_size=batch_size)
 
-def conv2d(input, weight_shape, bias_shape):
+def filter_summary(V, weight_shape):
+    ix = weight_shape[0]
+    iy = weight_shape[1]
+    cx, cy = 8, 8
+    V_T = tf.transpose(V, (3, 0, 1, 2))
+    tf.image_summary("filters", V_T, max_images=64) 
+
+def conv2d(input, weight_shape, bias_shape, visualize=False):
     incoming = weight_shape[0] * weight_shape[1] * weight_shape[2]
     weight_init = tf.random_normal_initializer(stddev=(2.0/incoming)**0.5)
     W = tf.get_variable("W", weight_shape, initializer=weight_init)
+    if visualize:
+        filter_summary(W, weight_shape)
     bias_init = tf.constant_initializer(value=0)
     b = tf.get_variable("b", bias_shape, initializer=bias_init)
     return tf.nn.relu(tf.nn.bias_add(tf.nn.conv2d(input, W, strides=[1, 1, 1, 1], padding='SAME'), b))
@@ -45,34 +54,10 @@ def layer(input, weight_shape, bias_shape):
                         initializer=bias_init)
     return tf.nn.relu(tf.matmul(input, W) + b)
 
-
-# def inference(x, keep_prob):
-
-#     x = tf.reshape(x, shape=[-1, 28, 28, 1])
-#     with tf.variable_scope("conv_1"):
-#         conv_1 = conv2d(x, [5, 5, 1, 32], [32])
-#         pool_1 = max_pool(conv_1)
-
-#     with tf.variable_scope("conv_2"):
-#         conv_2 = conv2d(pool_1, [5, 5, 32, 64], [64])
-#         pool_2 = max_pool(conv_2)
-
-#     with tf.variable_scope("fc"):
-#         pool_2_flat = tf.reshape(pool_2, [-1, 7 * 7 * 64])
-#         fc_1 = layer(pool_2_flat, [7*7*64, 1024], [1024])
-        
-#         # apply dropout
-#         fc_1_drop = tf.nn.dropout(fc_1, keep_prob)
-
-#     with tf.variable_scope("output"):
-#         output = layer(fc_1_drop, [1024, 10], [10])
-
-#     return output
-
 def inference(x, keep_prob):
 
     with tf.variable_scope("conv_1"):
-        conv_1 = conv2d(x, [5, 5, 3, 64], [64])
+        conv_1 = conv2d(x, [5, 5, 3, 64], [64], visualize=True)
         pool_1 = max_pool(conv_1)
 
     with tf.variable_scope("conv_2"):
