@@ -110,14 +110,14 @@ def inference(x, keep_prob, phase_train):
             dim *= d
 
         pool_2_flat = tf.reshape(pool_2, [-1, dim])
-        fc_1 = layer(pool_2_flat, [dim, 384], [384])
+        fc_1 = layer(pool_2_flat, [dim, 384], [384], phase_train)
         
         # apply dropout
         fc_1_drop = tf.nn.dropout(fc_1, keep_prob)
 
     with tf.variable_scope("fc_2"):
 
-        fc_2 = layer(fc_1_drop, [384, 192], [192])
+        fc_2 = layer(fc_1_drop, [384, 192], [192], phase_train)
         
         # apply dropout
         fc_2_drop = tf.nn.dropout(fc_2, keep_prob)
