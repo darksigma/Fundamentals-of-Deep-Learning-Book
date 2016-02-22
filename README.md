@@ -9,7 +9,7 @@ This repository is the code companion to my book "Fundamentals of Deep Learning.
 - Logistic Regression (Nikhil)
 - Multilayer Perceptron (Nikhil)
 - Convolutional Network (Nikhil)
-- Neural Style
+- Neural Style (Anish)
 - Autoencoder (Hassan)
 - Denoising Autoencoder (Hassan)
 - Convolutional Autoencoder (Hassan)
