@@ -132,8 +132,8 @@ if __name__ == '__main__':
 
             with tf.variable_scope("cifar_conv_model"):
 
-                x = tf.placeholder("float", [None, 784]) # mnist data image of shape 28*28=784
-                y = tf.placeholder("float", [None, 10]) # 0-9 digits recognition => 10 classes
+                x = tf.placeholder("float", [None, 24, 24, 3])
+                y = tf.placeholder("float", [None])
                 keep_prob = tf.placeholder(tf.float32) # dropout probability
 
                 output = inference(x, keep_prob)
