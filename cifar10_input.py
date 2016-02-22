@@ -120,7 +120,6 @@ def _generate_image_and_label_batch(image, label, min_queue_examples,
       min_after_dequeue=min_queue_examples)
 
   # Display the training images in the visualizer.
-  tf.image_summary('images', images)
 
   return images, tf.reshape(label_batch, [batch_size])
 
@@ -177,8 +176,13 @@ def distorted_inputs(data_dir, batch_size):
          'This will take a few minutes.' % min_queue_examples)
 
   # Generate a batch of images and labels by building up a queue of examples.
-  return _generate_image_and_label_batch(float_image, read_input.label,
-                                         min_queue_examples, batch_size)
+
+  images, labels = _generate_image_and_label_batch(float_image, read_input.label,
+                                                   min_queue_examples, batch_size)
+
+  tf.image_summary('distorted_images', images)
+
+  return images, labels
 
 
 def inputs(eval_data, data_dir, batch_size):
@@ -227,8 +231,12 @@ def inputs(eval_data, data_dir, batch_size):
                            min_fraction_of_examples_in_queue)
 
   # Generate a batch of images and labels by building up a queue of examples.
-  return _generate_image_and_label_batch(float_image, read_input.label,
-                                         min_queue_examples, batch_size)
+  images, labels = _generate_image_and_label_batch(float_image, read_input.label,
+                                                   min_queue_examples, batch_size)
+
+  tf.image_summary('val_images', images)
+
+  return images, labels
 
 def maybe_download_and_extract():
   """Download and extract the tarball from Alex's website."""
