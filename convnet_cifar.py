@@ -191,7 +191,7 @@ if __name__ == '__main__':
 
                         print "Validation Error:", (1 - accuracy)
 
-                        summary_str = sess.run(summary_op, feed_dict={keep_prob: 0.5, train_or_eval: 1.0})
+                        summary_str = sess.run(summary_op, feed_dict={x: train_x, y: train_y, keep_prob: 1})
                         summary_writer.add_summary(summary_str, sess.run(global_step))
 
                         saver.save(sess, "conv_cifar_logs/model-checkpoint", global_step=global_step)
