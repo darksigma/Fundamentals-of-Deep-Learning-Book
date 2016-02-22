@@ -136,7 +136,7 @@ if __name__ == '__main__':
                 y = tf.placeholder("float", [None, 10]) # 0-9 digits recognition => 10 classes
                 keep_prob = tf.placeholder(tf.float32) # dropout probability
 
-                output = inference(x, keep_prob * train_or_eval)
+                output = inference(x, keep_prob)
 
                 cost = loss(output, y)
 
