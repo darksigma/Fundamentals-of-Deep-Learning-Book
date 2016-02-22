@@ -161,7 +161,7 @@ if __name__ == '__main__':
                 distorted_images, distorted_labels = distorted_inputs()
                 val_images, val_labels = inputs()
 
-                output = inference(x, keep_prob)
+                output = inference(x, keep_prob, phase_train)
 
                 cost = loss(output, y)
 
