@@ -115,7 +115,6 @@ def training(cost, global_step):
     train_op = optimizer.minimize(cost, global_step=global_step)
     return train_op
 
-
 def evaluate(output, y):
     correct_prediction = tf.equal(tf.cast(tf.argmax(output, 1), dtype=tf.int32), y)
     accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
@@ -199,6 +198,7 @@ if __name__ == '__main__':
 
                 print "Optimization Finished!"
 
-                accuracy = sess.run(eval_op, feed_dict={keep_prob: 1, train_or_eval: 1.0})
+                val_x, val_y = sess.run([val_images, val_labels])
+                accuracy = sess.run(eval_op, feed_dict={x: val_x, y: val_y, keep_prob: 1})
 
                 print "Test Accuracy:", accuracy
