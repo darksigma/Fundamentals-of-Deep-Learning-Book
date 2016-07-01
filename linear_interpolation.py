@@ -79,7 +79,7 @@ for a in np.arange(-2, 2, 0.01):
 		alpha: [[a]],
 	}
 
-	cost, summary_str = sess.run([cost_inter, https://www.facebook.com/#summary_op], feed_dict=feed_dict)
+	cost, summary_str = sess.run([cost_inter, summary_op], feed_dict=feed_dict)
 	summary_writer.add_summary(summary_str, (a + 2)/0.01)
 	results.append(cost)
 
