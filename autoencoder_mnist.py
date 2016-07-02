@@ -89,8 +89,8 @@ def loss(output, x):
     with tf.variable_scope("training"):
         l2 = tf.sqrt(tf.reduce_sum(tf.square(tf.sub(output, x)), 1))
         train_loss = tf.reduce_mean(l2)
-        tf.scalar_summary("train_cost", train_loss)
-        return train_loss
+        train_summary_op = tf.scalar_summary("train_cost", train_loss)
+        return train_loss, train_summary_op
 
 def training(cost, global_step):
     optimizer = tf.train.AdamOptimizer(learning_rate=0.001, beta1=0.9, beta2=0.999, epsilon=1e-08, 
@@ -100,16 +100,16 @@ def training(cost, global_step):
 
 def image_summary(label, tensor):
     tensor_reshaped = tf.reshape(tensor, [-1, 28, 28, 1])
-    tf.image_summary(label, tensor_reshaped)
+    return tf.image_summary(label, tensor_reshaped)
 
 def evaluate(output, x):
     with tf.variable_scope("validation"):
-        image_summary("input_image", x)
-        image_summary("output_image", output)
+        in_im_op = image_summary("input_image", x)
+        out_im_op = image_summary("output_image", output)
         l2 = tf.sqrt(tf.reduce_sum(tf.square(tf.sub(output, x, name="val_diff")), 1))
         val_loss = tf.reduce_mean(l2)
-        tf.scalar_summary("val_cost", val_loss)
-        return val_loss
+        val_summary_op = tf.scalar_summary("val_cost", val_loss)
+        return val_loss, in_im_op, out_im_op, val_summary_op
 
 
 if __name__ == '__main__':
@@ -125,13 +125,13 @@ if __name__ == '__main__':
 
             output = decoder(code, phase_train)
 
-            cost = loss(output, x)
+            cost, train_summary_op = loss(output, x)
 
             global_step = tf.Variable(0, name='global_step', trainable=False)
 
             train_op = training(cost, global_step)
 
-            eval_op = evaluate(output, x)
+            eval_op, in_im_op, out_im_op, val_summary_op = evaluate(output, x)
 
             summary_op = tf.merge_all_summaries()
 
@@ -158,7 +158,7 @@ if __name__ == '__main__':
                 for i in range(total_batch):
                     minibatch_x, minibatch_y = mnist.train.next_batch(batch_size)
                     # Fit training using batch data
-                    _, new_cost, summary_str = sess.run([train_op, cost, summary_op], feed_dict={x: minibatch_x, phase_train: True})
+                    _, new_cost, train_summary = sess.run([train_op, cost, train_summary_op], feed_dict={x: minibatch_x, phase_train: True})
                     train_writer.add_summary(summary_str, sess.run(global_step))
                     # Compute average loss
                     avg_cost += new_cost/total_batch
@@ -166,8 +166,10 @@ if __name__ == '__main__':
                 if epoch % display_step == 0:
                     print "Epoch:", '%04d' % (epoch+1), "cost =", "{:.9f}".format(avg_cost)
 
-                    validation_loss, summary_str = sess.run([eval_op, summary_op], feed_dict={x: mnist.validation.images, phase_train: False})
-                    val_writer.add_summary(summary_str, sess.run(global_step))
+                    validation_loss, in_im, out_im, val_summary = sess.run([eval_op, in_im_op, out_im_op, val_summary_op], feed_dict={x: mnist.validation.images, phase_train: False})
+                    val_writer.add_summary(in_im, sess.run(global_step))
+                    val_writer.add_summary(out_im, sess.run(global_step))
+                    val_writer.add_summary(val_summary, sess.run(global_step))
                     print "Validation Loss:", validation_loss
 
                     saver.save(sess, "mnist_autoencoder_logs/model-checkpoint", global_step=global_step)
