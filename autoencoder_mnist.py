@@ -139,9 +139,11 @@ if __name__ == '__main__':
 
             sess = tf.Session()
 
-            summary_writer = tf.train.SummaryWriter("mnist_autoencoder_logs/",
+            train_writer = tf.train.SummaryWriter("mnist_autoencoder_logs/",
                                                 graph=sess.graph)
 
+            val_writer = tf.train.SummaryWriter("mnist_autoencoder_logs/",
+                                                graph=sess.graph)
             
             init_op = tf.initialize_all_variables()
 
@@ -157,7 +159,7 @@ if __name__ == '__main__':
                     minibatch_x, minibatch_y = mnist.train.next_batch(batch_size)
                     # Fit training using batch data
                     _, new_cost, summary_str = sess.run([train_op, cost, summary_op], feed_dict={x: minibatch_x, phase_train: True})
-                    summary_writer.add_summary(summary_str, sess.run(global_step))
+                    train_writer.add_summary(summary_str, sess.run(global_step))
                     # Compute average loss
                     avg_cost += new_cost/total_batch
                 # Display logs per epoch step
@@ -165,7 +167,7 @@ if __name__ == '__main__':
                     print "Epoch:", '%04d' % (epoch+1), "cost =", "{:.9f}".format(avg_cost)
 
                     validation_loss, summary_str = sess.run([eval_op, summary_op], feed_dict={x: mnist.validation.images, phase_train: False})
-                    summary_writer.add_summary(summary_str, sess.run(global_step))
+                    val_writer.add_summary(summary_str, sess.run(global_step))
                     print "Validation Loss:", validation_loss
 
                     saver.save(sess, "mnist_autoencoder_logs/model-checkpoint", global_step=global_step)
