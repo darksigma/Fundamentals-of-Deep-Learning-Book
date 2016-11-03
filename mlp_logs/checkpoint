@@ -1,6 +1,0 @@
-model_checkpoint_path: "mlp_logs/model-checkpoint-255200"
-all_model_checkpoint_paths: "mlp_logs/model-checkpoint-253000"
-all_model_checkpoint_paths: "mlp_logs/model-checkpoint-253550"
-all_model_checkpoint_paths: "mlp_logs/model-checkpoint-254100"
-all_model_checkpoint_paths: "mlp_logs/model-checkpoint-254650"
-all_model_checkpoint_paths: "mlp_logs/model-checkpoint-255200"

@@ -1,15 +1,12 @@
 import input_data
-mnist = input_data.read_data_sets("data/", one_hot=True)
-
 import tensorflow as tf
 from tensorflow.python import control_flow_ops
-import time
+import time, argparse
 
 # Architecture
 n_encoder_hidden_1 = 1000
 n_encoder_hidden_2 = 500
 n_encoder_hidden_3 = 250
-n_code = 30
 n_decoder_hidden_1 = 250
 n_decoder_hidden_2 = 500
 n_decoder_hidden_3 = 1000
@@ -44,23 +41,23 @@ def layer_batch_norm(x, n_out, phase_train):
     return tf.reshape(normed, [-1, n_out])
 
 def layer(input, weight_shape, bias_shape, phase_train):
-    weight_init = tf.random_normal_initializer(stddev=(2.0/weight_shape[0])**0.5)
+    weight_init = tf.random_normal_initializer(stddev=(1.0/weight_shape[0])**0.5)
     bias_init = tf.constant_initializer(value=0)
     W = tf.get_variable("W", weight_shape,
                         initializer=weight_init)
     b = tf.get_variable("b", bias_shape,
                         initializer=bias_init)
     logits = tf.matmul(input, W) + b
-    return tf.nn.relu(layer_batch_norm(logits, weight_shape[1], phase_train))
+    return tf.nn.sigmoid(layer_batch_norm(logits, weight_shape[1], phase_train))
 
-def encoder(x, phase_train):
+def encoder(x, n_code, phase_train):
     with tf.variable_scope("encoder"):
         with tf.variable_scope("hidden_1"):
             hidden_1 = layer(x, [784, n_encoder_hidden_1], [n_encoder_hidden_1], phase_train)
-         
+
         with tf.variable_scope("hidden_2"):
             hidden_2 = layer(hidden_1, [n_encoder_hidden_1, n_encoder_hidden_2], [n_encoder_hidden_2], phase_train)
-         
+
         with tf.variable_scope("hidden_3"):
             hidden_3 = layer(hidden_2, [n_encoder_hidden_2, n_encoder_hidden_3], [n_encoder_hidden_3], phase_train)
 
@@ -69,14 +66,14 @@ def encoder(x, phase_train):
 
     return code
 
-def decoder(code, phase_train):
+def decoder(code, n_code, phase_train):
     with tf.variable_scope("decoder"):
         with tf.variable_scope("hidden_1"):
             hidden_1 = layer(code, [n_code, n_decoder_hidden_1], [n_decoder_hidden_1], phase_train)
-         
+
         with tf.variable_scope("hidden_2"):
             hidden_2 = layer(hidden_1, [n_decoder_hidden_1, n_decoder_hidden_2], [n_decoder_hidden_2], phase_train)
-         
+
         with tf.variable_scope("hidden_3"):
             hidden_3 = layer(hidden_2, [n_decoder_hidden_2, n_decoder_hidden_3], [n_decoder_hidden_3], phase_train)
 
@@ -93,7 +90,7 @@ def loss(output, x):
         return train_loss, train_summary_op
 
 def training(cost, global_step):
-    optimizer = tf.train.AdamOptimizer(learning_rate=0.001, beta1=0.9, beta2=0.999, epsilon=1e-08, 
+    optimizer = tf.train.AdamOptimizer(learning_rate=0.001, beta1=0.9, beta2=0.999, epsilon=1e-08,
         use_locking=False, name='Adam')
     train_op = optimizer.minimize(cost, global_step=global_step)
     return train_op
@@ -114,6 +111,13 @@ def evaluate(output, x):
 
 if __name__ == '__main__':
 
+    parser = argparse.ArgumentParser(description='Test various optimization strategies')
+    parser.add_argument('n_code', nargs=1, type=str)
+    args = parser.parse_args()
+    n_code = args.n_code[0]
+
+    mnist = input_data.read_data_sets("data/", one_hot=True)
+
     with tf.Graph().as_default():
 
         with tf.variable_scope("autoencoder_model"):
@@ -121,9 +125,9 @@ if __name__ == '__main__':
             x = tf.placeholder("float", [None, 784]) # mnist data image of shape 28*28=784
             phase_train = tf.placeholder(tf.bool)
 
-            code = encoder(x, phase_train)
+            code = encoder(x, int(n_code), phase_train)
 
-            output = decoder(code, phase_train)
+            output = decoder(code, int(n_code), phase_train)
 
             cost, train_summary_op = loss(output, x)
 
@@ -135,16 +139,16 @@ if __name__ == '__main__':
 
             summary_op = tf.merge_all_summaries()
 
-            saver = tf.train.Saver()
+            saver = tf.train.Saver(max_to_keep=200)
 
             sess = tf.Session()
 
-            train_writer = tf.train.SummaryWriter("mnist_autoencoder_logs/",
+            train_writer = tf.train.SummaryWriter("mnist_autoencoder_hidden=" + n_code + "_logs/",
                                                 graph=sess.graph)
 
-            val_writer = tf.train.SummaryWriter("mnist_autoencoder_logs/",
+            val_writer = tf.train.SummaryWriter("mnist_autoencoder_hidden=" + n_code + "_logs/",
                                                 graph=sess.graph)
-            
+
             init_op = tf.initialize_all_variables()
 
             sess.run(init_op)
@@ -159,12 +163,14 @@ if __name__ == '__main__':
                     minibatch_x, minibatch_y = mnist.train.next_batch(batch_size)
                     # Fit training using batch data
                     _, new_cost, train_summary = sess.run([train_op, cost, train_summary_op], feed_dict={x: minibatch_x, phase_train: True})
-                    train_writer.add_summary(summary_str, sess.run(global_step))
+                    train_writer.add_summary(train_summary, sess.run(global_step))
                     # Compute average loss
                     avg_cost += new_cost/total_batch
                 # Display logs per epoch step
                 if epoch % display_step == 0:
                     print "Epoch:", '%04d' % (epoch+1), "cost =", "{:.9f}".format(avg_cost)
+
+                    train_writer.add_summary(train_summary, sess.run(global_step))
 
                     validation_loss, in_im, out_im, val_summary = sess.run([eval_op, in_im_op, out_im_op, val_summary_op], feed_dict={x: mnist.validation.images, phase_train: False})
                     val_writer.add_summary(in_im, sess.run(global_step))
@@ -172,7 +178,7 @@ if __name__ == '__main__':
                     val_writer.add_summary(val_summary, sess.run(global_step))
                     print "Validation Loss:", validation_loss
 
-                    saver.save(sess, "mnist_autoencoder_logs/model-checkpoint", global_step=global_step)
+                    saver.save(sess, "mnist_autoencoder_hidden=" + n_code + "_logs/model-checkpoint-" + '%04d' % (epoch+1), global_step=global_step)
 
 
             print "Optimization Finished!"
@@ -181,5 +187,3 @@ if __name__ == '__main__':
             test_loss = sess.run(eval_op, feed_dict={x: mnist.test.images, phase_train: False})
 
             print "Test Loss:", loss
-
-

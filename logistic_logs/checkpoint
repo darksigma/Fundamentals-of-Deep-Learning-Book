@@ -1,6 +1,0 @@
-model_checkpoint_path: "logistic_logs/-33000"
-all_model_checkpoint_paths: "logistic_logs/-30800"
-all_model_checkpoint_paths: "logistic_logs/-31350"
-all_model_checkpoint_paths: "logistic_logs/-31900"
-all_model_checkpoint_paths: "logistic_logs/-32450"
-all_model_checkpoint_paths: "logistic_logs/-33000"
