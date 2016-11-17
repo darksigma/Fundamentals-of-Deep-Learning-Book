@@ -1,6 +1,7 @@
 # Data files
 *.gz
-data/
+# data/
+data/word2vecdb
 
 # Python
 *.pyc
