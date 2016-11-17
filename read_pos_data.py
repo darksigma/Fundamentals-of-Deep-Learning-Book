@@ -132,7 +132,7 @@ else:
         train_dataset = f.readlines()
         train_dataset = [element.split() for element in train_dataset if len(element.split()) > 0]
 
-    with open("data/pos_data/pos.train.processed.txt") as f:
+    with open("data/pos_data/pos.test.processed.txt") as f:
         test_dataset = f.readlines()
         test_dataset = [element.split() for element in test_dataset if len(element.split()) > 0]
 
@@ -148,7 +148,7 @@ else:
 
 
 class POSDataset():
-    def __init__(self, db, train_dataset, tags_to_index, get_all=False):
+    def __init__(self, db, dataset, tags_to_index, get_all=False):
         self.db = db
         self.inputs = []
         self.tags = []
@@ -156,7 +156,7 @@ class POSDataset():
         self.n = 0
         self.get_all = get_all
 
-        for pair in train_dataset:
+        for pair in dataset:
             self.inputs.append(np.fromstring(db.Get(pair[0]), dtype=np.float32))
             self.tags.append(tags_to_index[pair[1]])
 
@@ -200,4 +200,4 @@ class POSDataset():
 
 
 train = POSDataset(db, train_dataset, tags_to_index)
-test = POSDataset(db, train_dataset, tags_to_index, get_all=True)
+test = POSDataset(db, test_dataset, tags_to_index, get_all=True)
