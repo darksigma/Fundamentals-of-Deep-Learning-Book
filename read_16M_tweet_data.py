@@ -74,7 +74,7 @@ class TweetDataset:
             self.inputs.append(cur_input)
 
         self.inputs = np.array(self.inputs, dtype=np.float32)
-        self.tags = np.eye(3)[self.tags]
+        self.tags = np.eye(2)[self.tags]
 
     def minibatch(self, size):
         batch_inputs = []

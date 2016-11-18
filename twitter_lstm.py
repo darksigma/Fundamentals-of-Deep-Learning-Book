@@ -25,12 +25,12 @@ with tf.device('/gpu:0'):
 
     _, final_hidden = state
 
-    W = tf.get_variable('W', [hidden_size, 3], initializer=orthogonal_initializer())
-    b = tf.get_variable('b', [3])
+    W = tf.get_variable('W', [hidden_size, 2], initializer=orthogonal_initializer())
+    b = tf.get_variable('b', [2])
 
     y = tf.nn.softmax(tf.matmul(final_hidden, W) + b)
 
-    y_ = tf.placeholder(tf.float32, [None, 3])
+    y_ = tf.placeholder(tf.float32, [None, 2])
 
     cross_entropy = tf.reduce_mean(-tf.reduce_sum(y_ * tf.log(y), reduction_indices=[1]))
 
