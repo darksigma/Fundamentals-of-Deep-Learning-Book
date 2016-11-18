@@ -5,13 +5,13 @@ import numpy as np
 import tensorflow as tf
 from tensorflow.python.ops.rnn import dynamic_rnn
 from lstm import LSTMCell, BNLSTMCell, orthogonal_initializer
-import read_tweet_data as data
+import read_16M_tweet_data as data
 
 batch_size = 100
 hidden_size = 256
 
 with tf.device('/gpu:0'):
-    x_inp = tf.placeholder(tf.float32, [None, 399, 101])
+    x_inp = tf.placeholder(tf.float32, [None, 200, 194])
     training = tf.placeholder(tf.bool)
 
     lstm = BNLSTMCell(hidden_size, training)

@@ -2,6 +2,7 @@
 *.gz
 # data/
 data/word2vecdb
+data/twitter/training.1600000.processed.noemoticon.csv
 
 # Python
 *.pyc

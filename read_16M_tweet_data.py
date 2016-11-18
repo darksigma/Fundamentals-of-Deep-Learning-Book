@@ -1,4 +1,5 @@
 import numpy as np
+import csv
 
 char_2_index = {}
 index_2_char = {}
@@ -9,25 +10,29 @@ index_2_sentiment = {}
 POSITIVE = 'positive'
 NEGATIVE = 'negative'
 
-with open("data/twitter/twitter-train-text.tsv") as f:
-    train_dataset_raw = f.readlines()
-    train_dataset_raw = [(" ".join(x.split("\t")[3].split()), x.split("\t")[2]) for x in train_dataset_raw]
+train_dataset_raw = []
+val_dataset_raw = []
 
-with open("data/twitter/twitter-dev-text.tsv") as f:
-    val_dataset_raw = f.readlines()
-    val_dataset_raw = [(" ".join(x.split("\t")[3].split()), x.split("\t")[2]) for x in val_dataset_raw]
+
+with open('data/twitter/training.1600000.processed.noemoticon.csv', 'rb') as f:
+    reader = csv.reader(f)
+    train_dataset_raw = list(reader)
+
+with open('data/twitter/testdata.manual.2009.06.14.csv', 'rb') as f:
+    reader = csv.reader(f)
+    val_dataset_raw = list(reader)
 
 counter_c = 0
 counter_s = 0
 max_row = 0
 for row in train_dataset_raw + val_dataset_raw:
-
-    max_row = max(len(row[0]), max_row)
-    if row[1] not in sentiment_2_index:
-        sentiment_2_index[row[1]] = counter_s
-        index_2_sentiment[counter_s] = row[1]
+    # print row[0], row[5]
+    max_row = max(len(row[5]), max_row)
+    if row[0] not in sentiment_2_index:
+        sentiment_2_index[row[0]] = counter_s
+        index_2_sentiment[counter_s] = row[0]
         counter_s += 1
-    for char in row[0]:
+    for char in row[5]:
         if char not in char_2_index:
             char_2_index[char] = counter_c
             index_2_char[counter_c] = char
@@ -47,20 +52,23 @@ class TweetDataset:
         self.get_all = get_all
 
         for row in dataset:
+            if len(row[5]) > 200:
+                continue
             # print row[1]
-            if row[1] == 'positive':
-                self.tags.append(2)
-            elif row[1] == 'negative':
+            if row[0] == '4':
+                self.tags.append(1)
+            elif row[0] == '0':
                 self.tags.append(0)
             else:
-                self.tags.append(1)
+                print "ERROR ON:", row
+                continue
             cur_input = []
-            for char in row[0]:
+            for char in row[5]:
                 cur_input.append(char_2_index[char])
             cur_input = np.eye(len(char_2_index.keys()))[cur_input]
             init_len = len(cur_input)
             # print init_len
-            if max_row - init_len > 0:
+            if 200 - init_len > 0:
                 zero = np.zeros((max_row - init_len, len(char_2_index.keys())))
                 cur_input = np.concatenate((cur_input, zero))
             self.inputs.append(cur_input)
