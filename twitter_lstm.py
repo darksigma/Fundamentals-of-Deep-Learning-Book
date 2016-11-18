@@ -56,8 +56,7 @@ with tf.device('/gpu:0'):
 
     init = tf.initialize_all_variables()
 
-    sess = tf.Session(config=tf.ConfigProto(
-              allow_soft_placement=True, log_device_placement=True))
+    sess = tf.Session(config=tf.ConfigProto(log_device_placement=True))
     sess.run(init)
 
     logdir = 'lstm_bn_logs/' + str(uuid.uuid4())
