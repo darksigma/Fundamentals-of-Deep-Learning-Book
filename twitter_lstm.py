@@ -14,7 +14,7 @@ with tf.device('/gpu:0'):
     x_inp = tf.placeholder(tf.float32, [None, 399, 101])
     training = tf.placeholder(tf.bool)
 
-    lstm = LSTMCell(hidden_size)
+    lstm = BNLSTMCell(hidden_size, training)
 
     #c, h
     initialState = (
