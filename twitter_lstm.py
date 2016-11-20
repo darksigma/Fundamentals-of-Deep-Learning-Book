@@ -43,16 +43,14 @@ with tf.device('/gpu:0'):
     accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
     # Summaries
-    tf.scalar_summary("accuracy", accuracy)
-    tf.scalar_summary("xe_loss", cross_entropy)
+    a_summary = tf.scalar_summary("accuracy", accuracy)
+    xe_summary = tf.scalar_summary("xe_loss", cross_entropy)
     for (grad, var), (capped_grad, _) in zip(gvs, capped_gvs):
         if grad is not None:
             tf.histogram_summary('grad/{}'.format(var.name), capped_grad)
             tf.histogram_summary('capped_fraction/{}'.format(var.name),
                 tf.nn.zero_fraction(grad - capped_grad))
             tf.histogram_summary('weight/{}'.format(var.name), var)
-
-    merged = tf.merge_all_summaries()
 
     init = tf.initialize_all_variables()
 
@@ -69,11 +67,12 @@ with tf.device('/gpu:0'):
 
     for i in range(100000):
         batch_xs, batch_ys = data.train.minibatch()
-        loss, _ = sess.run([cross_entropy, train_step], feed_dict={x_inp: batch_xs, y_: batch_ys, training: True})
+        loss, xe_str, _ = sess.run([cross_entropy, xe_summary, train_step], feed_dict={x_inp: batch_xs, y_: batch_ys, training: True})
         step_time = time.time() - current_time
+        writer.add_summary(xe_str, i)
         current_time = time.time()
         if i % 100 == 0:
             batch_xs, batch_ys = data.val.minibatch()
-            summary_str = sess.run(merged, feed_dict={x_inp: batch_xs, y_: batch_ys, training: False})
-            writer.add_summary(summary_str, i)
+            a_str = sess.run(a_summary, feed_dict={x_inp: batch_xs, y_: batch_ys, training: False})
+            writer.add_summary(a_str, i)
         print(loss, step_time)
