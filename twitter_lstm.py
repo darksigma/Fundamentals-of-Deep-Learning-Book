@@ -68,12 +68,12 @@ with tf.device('/gpu:0'):
     print("Using population statistics (training: False) at test time gives worse results than batch statistics")
 
     for i in range(100000):
-        batch_xs, batch_ys = data.train.minibatch(batch_size)
+        batch_xs, batch_ys = data.train.minibatch()
         loss, _ = sess.run([cross_entropy, train_step], feed_dict={x_inp: batch_xs, y_: batch_ys, training: True})
         step_time = time.time() - current_time
         current_time = time.time()
         if i % 100 == 0:
-            batch_xs, batch_ys = data.val.minibatch(batch_size)
+            batch_xs, batch_ys = data.val.minibatch()
             summary_str = sess.run(merged, feed_dict={x_inp: batch_xs, y_: batch_ys, training: False})
             writer.add_summary(summary_str, i)
         print(loss, step_time)
