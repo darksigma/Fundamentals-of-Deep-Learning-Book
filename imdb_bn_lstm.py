@@ -1,5 +1,5 @@
 import tensorflow as tf
-from lstm import LSTMCell
+from lstm import BNLSTMCell
 import read_imdb_data as data
 
 training_epochs = 1000
