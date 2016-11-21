@@ -11,7 +11,7 @@ import read_tweet_data as data
 from sklearn.metrics import confusion_matrix
 
 batch_size = 256
-hidden_size = 100
+hidden_size = 32
 
 def layer_batch_norm(x, n_out, phase_train):
     beta_init = tf.constant_initializer(value=0.0, dtype=tf.float32)
@@ -79,6 +79,7 @@ with tf.device('/gpu:0'):
 
     # Summaries
     a_summary = tf.scalar_summary("accuracy", accuracy)
+    tr_acc = tf.scalar_summary("train_accuracy", accuracy)
     xe_summary = tf.scalar_summary("xe_loss", cross_entropy)
     val_summary_op = tf.scalar_summary("val_loss", cross_entropy)
     for (grad, var), (capped_grad, _) in zip(gvs, capped_gvs):
@@ -101,19 +102,29 @@ with tf.device('/gpu:0'):
     print("Using population statistics (training: False) at test time gives worse results than batch statistics")
 
     for i in range(100000):
-        batch_xs, batch_ys = data.train.minibatch()
-        loss, xe_str, _ = sess.run([cross_entropy, xe_summary, train_step], feed_dict={x_inp: batch_xs, y_: batch_ys, training: True})
+        t_batch_xs, t_batch_ys = data.train.minibatch()
+        loss, xe_str, _, train_preds, train_acc = sess.run([cross_entropy, xe_summary, train_step, train_preds, tr_acc], feed_dict={x_inp: t_batch_xs, y_: t_batch_ys, training: True})
         step_time = time.time() - current_time
         writer.add_summary(xe_str, i)
+        writer.add_summary(train_acc, i)
         current_time = time.time()
         if i % 100 == 0:
             batch_xs, batch_ys = data.val.minibatch()
             a_str, val_summary, preds = sess.run([a_summary, val_summary_op, y], feed_dict={x_inp: batch_xs, y_: batch_ys, training: False})
 
+
+            print train_preds[:10], t_batch_ys[:10]
+
+
+            cnf_matrix = confusion_matrix(np.argmax(train_preds, axis=1), np.argmax(t_batch_ys, axis=1))
+            print "Traning Confusion Matrix:", cnf_matrix.tolist()
+
+
             print preds[:10], batch_ys[:10]
 
+
             cnf_matrix = confusion_matrix(np.argmax(preds, axis=1), np.argmax(batch_ys, axis=1))
-            print "Confusion Matrix:", cnf_matrix.tolist()
+            print "Validation Confusion Matrix:", cnf_matrix.tolist()
             writer.add_summary(a_str, i)
             writer.add_summary(val_summary, i)
         print(loss, step_time)
