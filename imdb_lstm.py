@@ -111,6 +111,7 @@ if __name__ == '__main__':
 
                 avg_cost = 0.
                 total_batch = int(data.train.num_examples/batch_size)
+                print "Total of %d minbatches in epoch %d" % (total_batch, epoch)
                 # Loop over all batches
                 for i in range(total_batch):
                     minibatch_x, minibatch_y = data.train.minibatch(batch_size)
