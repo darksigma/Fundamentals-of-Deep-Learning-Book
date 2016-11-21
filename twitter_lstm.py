@@ -76,7 +76,7 @@ with tf.device('/gpu:0'):
             batch_xs, batch_ys = data.val.minibatch()
             a_str, preds = sess.run([a_summary, y], feed_dict={x_inp: batch_xs, y_: batch_ys, training: False})
 
-            print np.max(preds, axis=1)[:10], np.arg(batch_ys, axis=1)[:10]
+            print preds[:10], batch_ys[:10]
 
             cnf_matrix = confusion_matrix(np.argmax(preds, axis=1), np.argmax(batch_ys, axis=1))
             print "Confusion Matrix:", cnf_matrix.tolist()
