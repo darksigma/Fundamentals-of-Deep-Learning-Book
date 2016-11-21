@@ -83,7 +83,7 @@ if not os.path.isdir("data/twitter/tweetdb"):
 
         print len(tags)
 
-        if len(inputs) == 100:
+        if len(inputs) == 256:
             print "FINISH MINIBATCH %d, INSERT INTO DB" % train_minibatches
             inputs = np.array(inputs, dtype=np.float32)
             tags = np.eye(2, dtype=np.float32)[tags]
@@ -120,7 +120,7 @@ if not os.path.isdir("data/twitter/tweetdb"):
             cur_input = np.concatenate((cur_input, zero))
         inputs.append(cur_input)
 
-        if len(inputs) == 100:
+        if len(inputs) == 256:
             inputs = np.array(inputs, dtype=np.float32)
             tags = np.eye(2, dtype=np.float32)[tags]
             db.Put("val_inputs_0", inputs)

@@ -4,14 +4,16 @@ import os
 import numpy as np
 import tensorflow as tf
 from tensorflow.python.ops.rnn import dynamic_rnn
+from tensorflow.python.ops.rnn_cell import MultiRNNCell
 from lstm import LSTMCell, BNLSTMCell, orthogonal_initializer
-import read_16M_tweet_data as data
+import read_tweet_data as data
+from sklearn.metrics import confusion_matrix
 
-batch_size = 100
+batch_size = 256
 hidden_size = 256
 
 with tf.device('/gpu:0'):
-    x_inp = tf.placeholder(tf.float32, [None, 200, 194])
+    x_inp = tf.placeholder(tf.float32, [None, 200, 155])
     training = tf.placeholder(tf.bool)
 
     lstm = BNLSTMCell(hidden_size, training)
@@ -57,8 +59,7 @@ with tf.device('/gpu:0'):
     sess = tf.Session(config=tf.ConfigProto(allow_soft_placement=True, log_device_placement=True))
     sess.run(init)
 
-    logdir = 'lstm_bn_logs/' + str(uuid.uuid4())
-    os.makedirs(logdir)
+    logdir = 'airline_logs/'
     print('logging to ' + logdir)
     writer = tf.train.SummaryWriter(logdir, sess.graph)
 
@@ -73,6 +74,9 @@ with tf.device('/gpu:0'):
         current_time = time.time()
         if i % 100 == 0:
             batch_xs, batch_ys = data.val.minibatch()
-            a_str = sess.run(a_summary, feed_dict={x_inp: batch_xs, y_: batch_ys, training: False})
+            a_str, preds = sess.run([a_summary, y], feed_dict={x_inp: batch_xs, y_: batch_ys, training: False})
+
+            cnf_matrix = confusion_matrix(np.argmax(preds, axis=1), np.argmax(batch_ys, axis=1))
+            print "Confusion Matrix:", cnf_matrix.tolist()
             writer.add_summary(a_str, i)
         print(loss, step_time)
