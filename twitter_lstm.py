@@ -10,7 +10,7 @@ import read_tweet_data as data
 from sklearn.metrics import confusion_matrix
 
 batch_size = 256
-hidden_size = 256
+hidden_size = 50
 
 with tf.device('/gpu:0'):
     x_inp = tf.placeholder(tf.float32, [None, 200, 155])
