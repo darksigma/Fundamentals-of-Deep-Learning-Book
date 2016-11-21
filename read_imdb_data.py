@@ -35,7 +35,8 @@ class IMDBDataset():
             ret = np.concatenate((self.inputs[self.ptr:], self.inputs[:size-len(self.inputs[self.ptr:])])), np.concatenate((self.tags[self.ptr:], self.tags[:size-len(self.tags[self.ptr:])]))
         self.ptr = (self.ptr + size) % len(self.inputs)
 
-        return np.eye(10000)[ret[0]], ret[1]
+        return ret
+        # return np.eye(10000)[ret[0]], ret[1]
 
 
 train = IMDBDataset(trainX, trainY)

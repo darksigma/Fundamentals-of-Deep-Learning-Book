@@ -10,15 +10,18 @@ def embedding_layer(input, weight_shape):
     weight_init = tf.random_normal_initializer(stddev=(1.0/weight_shape[0])**0.5)
     E = tf.get_variable("E", weight_shape,
                         initializer=weight_init)
-    E_exp = tf.expand_dims(E, 0)
-    E_tiled= tf.tile(E_exp, [32, 1, 1])
-    return tf.batch_matmul(input, E_exp)
+    # E_exp = tf.expand_dims(E, 0)
+    # E_tiled= tf.tile(E_exp, [32, 1, 1])
+    # return tf.batch_matmul(input, E_exp)
+    incoming = tf.cast(input, tf.int32)
+    embeddings = tf.nn.embedding_lookup(E, incoming)
+    return embeddings
 
 def lstm(input, hidden_dim, keep_prob, phase_train):
         lstm = LSTMCell(hidden_dim)
         dropout_lstm = tf.nn.rnn_cell.DropoutWrapper(lstm, input_keep_prob=keep_prob, output_keep_prob=keep_prob)
         lstm_outputs, state = tf.nn.dynamic_rnn(dropout_lstm, input, dtype=tf.float32)
-        return tf.squeeze(tf.slice(lstm_outputs, [0, 99, 0], [32, 1, 128]))
+        return tf.squeeze(tf.slice(lstm_outputs, [0, tf.shape(lstm_outputs)[1]-1, 0], [tf.shape(lstm_outputs)[0], 1, tf.shape(lstm_outputs)[2]]))
 
 def layer_batch_norm(x, n_out, phase_train):
     beta_init = tf.constant_initializer(value=0.0, dtype=tf.float32)
@@ -55,7 +58,7 @@ def layer(input, weight_shape, bias_shape, phase_train):
 
 def inference(input, phase_train):
     embedding = embedding_layer(input, [10000, 128])
-    lstm_output = lstm(input, 128, 0.8, phase_train)
+    lstm_output = lstm(embedding, 128, 0.8, phase_train)
     output = layer(lstm_output, [128, 2], [2], phase_train)
     return output
 
@@ -82,7 +85,7 @@ if __name__ == '__main__':
 
     with tf.Graph().as_default():
         with tf.device('/gpu:0'):
-            x = tf.placeholder("float", [None, 100, 10000])
+            x = tf.placeholder("float", [None, 100])
             y = tf.placeholder("float", [None, 2])
             phase_train = tf.placeholder(tf.bool)
 
