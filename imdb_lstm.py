@@ -7,7 +7,7 @@ batch_size = 32
 display_step = 1
 
 def embedding_layer(input, weight_shape):
-    weight_init = tf.truncated_normal(stddev=(1.0/weight_shape[0])**0.5)
+    weight_init = tf.random_normal_initializer(stddev=(1.0/weight_shape[0])**0.5)
     E = tf.get_variable("E", weight_shape,
                         initializer=weight_init)
     # E_exp = tf.expand_dims(E, 0)
