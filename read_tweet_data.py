@@ -26,6 +26,8 @@ if not os.path.isdir("data/twitter/tweetdb"):
     with open('data/twitter/airlines_tweets.csv', 'rb') as f:
         reader = csv.reader(f)
         dataset_original = list(reader)
+        dataset_original = dataset_original[1:]
+        np.random.shuffle(dataset_original)
 
 
     counter_c = 0
@@ -35,7 +37,7 @@ if not os.path.isdir("data/twitter/tweetdb"):
     val_neg = []
     val_pos = []
 
-    for row in dataset_original[1:]:
+    for row in dataset_original:
         print row[1], row[10]
         if (row[1] == "positive" or row[1] == "negative") and len(row[10])<200 :
             if row[1] == "positive" and len(val_pos) < 128:
