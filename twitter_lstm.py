@@ -3,6 +3,7 @@ import uuid
 import os
 import numpy as np
 import tensorflow as tf
+from tensorflow.python import control_flow_ops
 from tensorflow.python.ops.rnn import dynamic_rnn
 from tensorflow.python.ops.rnn_cell import MultiRNNCell
 from lstm import LSTMCell, BNLSTMCell, orthogonal_initializer
@@ -10,13 +11,46 @@ import read_tweet_data as data
 from sklearn.metrics import confusion_matrix
 
 batch_size = 256
-hidden_size = 16
+hidden_size = 100
+
+def layer_batch_norm(x, n_out, phase_train):
+    beta_init = tf.constant_initializer(value=0.0, dtype=tf.float32)
+    gamma_init = tf.constant_initializer(value=1.0, dtype=tf.float32)
+
+    beta = tf.get_variable("beta", [n_out], initializer=beta_init)
+    gamma = tf.get_variable("gamma", [n_out], initializer=gamma_init)
+
+    batch_mean, batch_var = tf.nn.moments(x, [0], name='moments')
+    ema = tf.train.ExponentialMovingAverage(decay=0.9)
+    ema_apply_op = ema.apply([batch_mean, batch_var])
+    ema_mean, ema_var = ema.average(batch_mean), ema.average(batch_var)
+    def mean_var_with_update():
+        with tf.control_dependencies([ema_apply_op]):
+            return tf.identity(batch_mean), tf.identity(batch_var)
+    mean, var = control_flow_ops.cond(phase_train,
+        mean_var_with_update,
+        lambda: (ema_mean, ema_var))
+
+    reshaped_x = tf.reshape(x, [-1, 1, 1, n_out])
+    normed = tf.nn.batch_norm_with_global_normalization(reshaped_x, mean, var,
+        beta, gamma, 1e-3, True)
+    return tf.reshape(normed, [-1, n_out])
+
+def layer(input, weight_shape, bias_shape, phase_train):
+    weight_init = tf.random_normal_initializer(stddev=(1.0/weight_shape[0])**0.5)
+    bias_init = tf.constant_initializer(value=0)
+    W = tf.get_variable("W", weight_shape,
+                        initializer=weight_init)
+    b = tf.get_variable("b", bias_shape,
+                        initializer=bias_init)
+    logits = tf.matmul(input, W) + b
+    return tf.nn.sigmoid(layer_batch_norm(logits, weight_shape[1], phase_train))
 
 with tf.device('/gpu:0'):
     x_inp = tf.placeholder(tf.float32, [None, 200, 155])
     training = tf.placeholder(tf.bool)
 
-    lstm = BNLSTMCell(hidden_size, training)
+    lstm = LSTMCell(hidden_size)
 
     #c, h
     initialState = (
@@ -27,10 +61,9 @@ with tf.device('/gpu:0'):
 
     _, final_hidden = state
 
-    W = tf.get_variable('W', [hidden_size, 2], initializer=orthogonal_initializer())
-    b = tf.get_variable('b', [2])
+    intermediary = layer(final_hidden, [hidden_size, 2], [2], training)
 
-    y = tf.nn.softmax(tf.matmul(final_hidden, W) + b)
+    y = tf.nn.softmax(intermediary)
 
     y_ = tf.placeholder(tf.float32, [None, 2])
 
@@ -47,6 +80,7 @@ with tf.device('/gpu:0'):
     # Summaries
     a_summary = tf.scalar_summary("accuracy", accuracy)
     xe_summary = tf.scalar_summary("xe_loss", cross_entropy)
+    val_summary_op = tf.scalar_summary("val_loss", cross_entropy)
     for (grad, var), (capped_grad, _) in zip(gvs, capped_gvs):
         if grad is not None:
             tf.histogram_summary('grad/{}'.format(var.name), capped_grad)
@@ -74,11 +108,12 @@ with tf.device('/gpu:0'):
         current_time = time.time()
         if i % 100 == 0:
             batch_xs, batch_ys = data.val.minibatch()
-            a_str, preds = sess.run([a_summary, y], feed_dict={x_inp: batch_xs, y_: batch_ys, training: False})
+            a_str, val_summary, preds = sess.run([a_summary, val_summary_op, y], feed_dict={x_inp: batch_xs, y_: batch_ys, training: False})
 
             print preds[:10], batch_ys[:10]
 
             cnf_matrix = confusion_matrix(np.argmax(preds, axis=1), np.argmax(batch_ys, axis=1))
             print "Confusion Matrix:", cnf_matrix.tolist()
             writer.add_summary(a_str, i)
+            writer.add_summary(val_summary, i)
         print(loss, step_time)
