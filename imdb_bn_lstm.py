@@ -71,7 +71,9 @@ def loss(output, y):
 def training(cost, global_step):
     optimizer = tf.train.AdamOptimizer(learning_rate=0.001, beta1=0.9, beta2=0.999, epsilon=1e-08,
         use_locking=False, name='Adam')
-    train_op = optimizer.minimize(cost, global_step=global_step)
+    gvs = optimizer.compute_gradients(cost)
+    capped_gvs = [(None if grad is None else tf.clip_by_value(grad, -10., 10.), var) for grad, var in gvs]
+    train_op = optimizer.apply_gradients(capped_gvs, global_step=global_step)
     return train_op
 
 def evaluate(output, y):
