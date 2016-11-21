@@ -103,7 +103,7 @@ with tf.device('/gpu:0'):
 
     for i in range(100000):
         t_batch_xs, t_batch_ys = data.train.minibatch()
-        loss, xe_str, _, train_preds, train_acc = sess.run([cross_entropy, xe_summary, train_step, train_preds, tr_acc], feed_dict={x_inp: t_batch_xs, y_: t_batch_ys, training: True})
+        loss, xe_str, _, train_preds, train_acc = sess.run([cross_entropy, xe_summary, train_step, y, tr_acc], feed_dict={x_inp: t_batch_xs, y_: t_batch_ys, training: True})
         step_time = time.time() - current_time
         writer.add_summary(xe_str, i)
         writer.add_summary(train_acc, i)
