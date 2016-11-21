@@ -18,9 +18,8 @@ def embedding_layer(input, weight_shape):
     return embeddings
 
 def lstm(input, hidden_dim, keep_prob, phase_train):
-        lstm = LSTMCell(hidden_dim)
-        dropout_lstm = tf.nn.rnn_cell.DropoutWrapper(lstm, input_keep_prob=keep_prob, output_keep_prob=keep_prob)
-        lstm_outputs, state = tf.nn.dynamic_rnn(dropout_lstm, input, dtype=tf.float32)
+        lstm = BNLSTMCell(hidden_dim, phase_train)
+        lstm_outputs, state = tf.nn.dynamic_rnn(lstm, input, dtype=tf.float32)
         return tf.squeeze(tf.slice(lstm_outputs, [0, tf.shape(lstm_outputs)[1]-1, 0], [tf.shape(lstm_outputs)[0], 1, tf.shape(lstm_outputs)[2]]))
 
 def layer_batch_norm(x, n_out, phase_train):
@@ -103,7 +102,7 @@ if __name__ == '__main__':
 
             sess = tf.Session(config=tf.ConfigProto(allow_soft_placement=True, log_device_placement=True))
 
-            summary_writer = tf.train.SummaryWriter("imdb_lstm_logs/",
+            summary_writer = tf.train.SummaryWriter("imdb_bnlstm_logs/",
                                                 graph=sess.graph)
 
             init_op = tf.initialize_all_variables()
@@ -133,7 +132,7 @@ if __name__ == '__main__':
                     summary_writer.add_summary(val_loss_summary, sess.run(global_step))
                     print "Validation Accuracy:", val_accuracy
 
-                    saver.save(sess, "imdb_lstm_logs/model-checkpoint-" + '%04d' % (epoch+1), global_step=global_step)
+                    saver.save(sess, "imdb_bnlstm_logs/model-checkpoint-" + '%04d' % (epoch+1), global_step=global_step)
 
 
             print "Optimization Finished!"
