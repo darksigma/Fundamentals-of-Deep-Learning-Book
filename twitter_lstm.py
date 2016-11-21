@@ -10,7 +10,7 @@ import read_tweet_data as data
 from sklearn.metrics import confusion_matrix
 
 batch_size = 256
-hidden_size = 50
+hidden_size = 16
 
 with tf.device('/gpu:0'):
     x_inp = tf.placeholder(tf.float32, [None, 200, 155])
@@ -75,6 +75,8 @@ with tf.device('/gpu:0'):
         if i % 100 == 0:
             batch_xs, batch_ys = data.val.minibatch()
             a_str, preds = sess.run([a_summary, y], feed_dict={x_inp: batch_xs, y_: batch_ys, training: False})
+
+            print np.max(preds, axis=1)[:10], np.argmax(batch_ys, axis=1)[:10]
 
             cnf_matrix = confusion_matrix(np.argmax(preds, axis=1), np.argmax(batch_ys, axis=1))
             print "Confusion Matrix:", cnf_matrix.tolist()
