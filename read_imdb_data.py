@@ -4,7 +4,7 @@ from tflearn.datasets import imdb
 import numpy as np
 
 # IMDB Dataset loading
-train, test, _ = imdb.load_data(path='data/imdb.pkl', n_words=10000,
+train, test, _ = imdb.load_data(path='data/imdb.pkl', n_words=30000,
                                 valid_portion=0.1)
 trainX, trainY = train
 testX, testY = test
