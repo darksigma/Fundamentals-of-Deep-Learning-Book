@@ -20,7 +20,8 @@ def embedding_layer(input, weight_shape):
 def lstm(input, hidden_dim, keep_prob, phase_train):
         lstm = LSTMCell(hidden_dim)
         dropout_lstm = tf.nn.rnn_cell.DropoutWrapper(lstm, input_keep_prob=keep_prob, output_keep_prob=keep_prob)
-        lstm_outputs, state = tf.nn.dynamic_rnn(dropout_lstm, input, dtype=tf.float32)
+        stacked_lstm = tf.nn.rnn_cell.MultiRNNCell([dropout_lstm] * 2, state_is_tuple=True)
+        lstm_outputs, state = tf.nn.dynamic_rnn(stacked_lstm, input, dtype=tf.float32)
         return tf.squeeze(tf.slice(lstm_outputs, [0, tf.shape(lstm_outputs)[1]-1, 0], [tf.shape(lstm_outputs)[0], 1, tf.shape(lstm_outputs)[2]]))
 
 def layer_batch_norm(x, n_out, phase_train):
