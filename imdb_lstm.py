@@ -59,9 +59,9 @@ def layer(input, weight_shape, bias_shape, phase_train):
     return tf.nn.sigmoid(layer_batch_norm(logits, weight_shape[1], phase_train))
 
 def inference(input, phase_train):
-    embedding = embedding_layer(input, [10000, 128])
-    lstm_output = lstm(embedding, 128, 0.8, phase_train)
-    output = layer(lstm_output, [128, 2], [2], phase_train)
+    embedding = embedding_layer(input, [10000, 256])
+    lstm_output = lstm(embedding, 256, 0.8, phase_train)
+    output = layer(lstm_output, [256, 2], [2], phase_train)
     return output
 
 def loss(output, y):
