@@ -18,12 +18,12 @@ def embedding_layer(input, weight_shape):
     return embeddings
 
 def lstm(input, hidden_dim, keep_prob, phase_train):
-        lstm = LSTMCell(hidden_dim)
+        lstm = tf.nn.rnn_cell.BasicLSTMCell(hidden_dim)
         dropout_lstm = tf.nn.rnn_cell.DropoutWrapper(lstm, input_keep_prob=keep_prob, output_keep_prob=keep_prob)
         # stacked_lstm = tf.nn.rnn_cell.MultiRNNCell([dropout_lstm] * 2, state_is_tuple=True)
         lstm_outputs, state = tf.nn.dynamic_rnn(dropout_lstm, input, dtype=tf.float32)
         #return tf.squeeze(tf.slice(lstm_outputs, [0, tf.shape(lstm_outputs)[1]-1, 0], [tf.shape(lstm_outputs)[0], 1, tf.shape(lstm_outputs)[2]]))
-        return tf.reduce_mean(lstm_outputs, reduction_indices=[1])
+        return tf.reduce_max(lstm_outputs, reduction_indices=[1])
 
 def layer_batch_norm(x, n_out, phase_train):
     beta_init = tf.constant_initializer(value=0.0, dtype=tf.float32)
@@ -59,9 +59,9 @@ def layer(input, weight_shape, bias_shape, phase_train):
     return tf.nn.sigmoid(layer_batch_norm(logits, weight_shape[1], phase_train))
 
 def inference(input, phase_train):
-    embedding = embedding_layer(input, [30000, 128])
-    lstm_output = lstm(embedding, 128, 0.8, phase_train)
-    output = layer(lstm_output, [128, 2], [2], phase_train)
+    embedding = embedding_layer(input, [30000, 512])
+    lstm_output = lstm(embedding, 512, 0.8, phase_train)
+    output = layer(lstm_output, [512, 2], [2], phase_train)
     return output
 
 def loss(output, y):
@@ -87,7 +87,7 @@ if __name__ == '__main__':
 
     with tf.Graph().as_default():
         with tf.device('/gpu:0'):
-            x = tf.placeholder("float", [None, 100])
+            x = tf.placeholder("float", [None, 500])
             y = tf.placeholder("float", [None, 2])
             phase_train = tf.placeholder(tf.bool)
 
