@@ -80,11 +80,34 @@ def training(cost, global_step):
     train_op = optimizer.minimize(cost, global_step=global_step)
     return train_op
 
-def evaluate(output, y):
+def accuracy_accumulate(output, y, accuracy_accumulator, val_loss_accumulator, validation_batches):
+    xentropy = tf.nn.softmax_cross_entropy_with_logits(output, y)
+    loss = tf.reduce_mean(xentropy)
+
+    val_loss_incr = tf.assign(val_loss_accumulator, tf.add(val_loss_accumulator, loss))
+
     correct_prediction = tf.equal(tf.argmax(output, 1), tf.argmax(y, 1))
     accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+
+    val_batches_incr = tf.assign(validation_batches, tf.add(validation_batches, tf.constant(1.0)))
+    acc_accum_incr = tf.assign(accuracy_accumulator, tf.add(accuracy_accumulator, accuracy))
+
+    return acc_accum_incr, val_loss_incr, val_batches_incr
+
+def evaluate(accuracy_accumulator, val_loss_accumulator, validation_batches):
+    accuracy = accuracy_accumulator/validation_batches
+    loss = val_loss_accumulator/validation_batches
     accuracy_summary_op = tf.scalar_summary("accuracy", accuracy)
-    return accuracy, accuracy_summary_op
+    val_loss_summary_op = tf.scalar_summary("val_cost", loss)
+
+    return accuracy, accuracy_summary_op, val_loss_summary_op
+
+def clear(accuracy_accumulator, val_loss_accumulator, validation_batches):
+    val_batches_clr = tf.assign(validation_batches, tf.constant(0.))
+    val_loss_clr = tf.assign(val_loss_accumulator, tf.constant(0.))
+    acc_accum_clr = tf.assign(accuracy_accumulator, tf.constant(0.))
+    return acc_accum_clr, val_loss_clr, val_batches_clr
+
 
 if __name__ == '__main__':
 
@@ -100,9 +123,19 @@ if __name__ == '__main__':
 
             global_step = tf.Variable(0, name='global_step', trainable=False)
 
+            accuracy_accumulator = tf.Variable(0., name="accuracy_accumulator")
+
+            val_loss_accumulator = tf.Variable(0., name="val_loss_accumulator")
+
+            validation_batches = tf.Variable(0., name="validation_batches")
+
             train_op = training(cost, global_step)
 
-            eval_op, eval_summary_op = evaluate(output, y)
+            acc_accum_incr, val_loss_incr, val_batches_incr = accuracy_accumulate(output, y, accuracy_accumulator, val_loss_accumulator, validation_batches)
+
+            acc_accum_clr, val_loss_clr, val_batches_clr = clear(accuracy_accumulator, val_loss_accumulator, validation_batches)
+
+            eval_op, eval_summary_op, val_loss_summary_op = evaluate(accuracy_accumulator, val_loss_accumulator, validation_batches)
 
             saver = tf.train.Saver(max_to_keep=100)
 
@@ -132,9 +165,13 @@ if __name__ == '__main__':
                     if i % 100 == 0:
                         print "Epoch:", '%04d' % (epoch+1), "Minibatch:", '%04d' % (i+1), "cost =", "{:.9f}".format((avg_cost * total_batch)/(i+1))
                         val_x, val_y = data.val.minibatch(data.val.num_examples)
-                        val_accuracy, val_summary, val_loss_summary = sess.run([eval_op, eval_summary_op, val_loss_summary_op], feed_dict={x: val_x, y: val_y, phase_train: False})
+                        for b in xrange(100):
+                            _, _, _ = sess.run([acc_accum_incr_op, val_batches_incr_op, val_loss_incr], feed_dict={x: val_x[25*b:25*b+25], y: val_y[25*b:25*b+25], phase_train: False})
+                            acc, v_loss, num_val_batches = sess.run([accuracy_accumulator, val_loss_accumulator, validation_batches])
+                            print "Intermediate accuracy accumulator reads", acc, "after", num_val_batches, "validation batches. validation loss accumulated:", v_loss
+                        val_accuracy, val_summary, v_loss_summary = sess.run([eval_op, eval_summary_op, val_loss_summary_op])
                         summary_writer.add_summary(val_summary, sess.run(global_step))
-                        summary_writer.add_summary(val_loss_summary, sess.run(global_step))
+                        summary_writer.add_summary(v_loss_summary, sess.run(global_step))
                         print "Validation Accuracy:", val_accuracy
 
                         saver.save(sess, "imdb_ohlstm_logs/model-checkpoint-" + '%04d' % (epoch+1), global_step=global_step)
