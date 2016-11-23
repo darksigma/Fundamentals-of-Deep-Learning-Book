@@ -21,7 +21,7 @@ def one_hot_conversion(input):
     return tf.one_hot(tf.cast(input, tf.int32), depth=30000, axis=-1)
 
 def lstm(input, hidden_dim, keep_prob, phase_train):
-        lstm = tf.nn.rnn_cell.BasicLSTMCell(hidden_dim)
+        lstm = tf.nn.rnn_cell.BasicLSTMCell(hidden_dim, state_is_tuple=True)
         dropout_lstm = tf.nn.rnn_cell.DropoutWrapper(lstm, input_keep_prob=keep_prob, output_keep_prob=keep_prob)
         # stacked_lstm = tf.nn.rnn_cell.MultiRNNCell([dropout_lstm] * 2, state_is_tuple=True)
         lstm_outputs, state = tf.nn.dynamic_rnn(dropout_lstm, input, dtype=tf.float32)
