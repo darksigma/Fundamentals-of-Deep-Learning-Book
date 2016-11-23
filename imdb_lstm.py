@@ -60,7 +60,7 @@ def layer(input, weight_shape, bias_shape, phase_train):
 
 def inference(input, phase_train):
     embedding = embedding_layer(input, [30000, 512])
-    lstm_output = lstm(embedding, 512, 0.8, phase_train)
+    lstm_output = lstm(embedding, 512, 0.5, phase_train)
     output = layer(lstm_output, [512, 2], [2], phase_train)
     return output
 
