@@ -166,7 +166,7 @@ if __name__ == '__main__':
                         print "Epoch:", '%04d' % (epoch+1), "Minibatch:", '%04d' % (i+1), "cost =", "{:.9f}".format((avg_cost * total_batch)/(i+1))
                         val_x, val_y = data.val.minibatch(data.val.num_examples)
                         for b in xrange(100):
-                            _, _, _ = sess.run([acc_accum_incr_op, val_batches_incr_op, val_loss_incr], feed_dict={x: val_x[25*b:25*b+25], y: val_y[25*b:25*b+25], phase_train: False})
+                            _, _, _ = sess.run([acc_accum_incr, val_batches_incr, val_loss_incr], feed_dict={x: val_x[25*b:25*b+25], y: val_y[25*b:25*b+25], phase_train: False})
                             acc, v_loss, num_val_batches = sess.run([accuracy_accumulator, val_loss_accumulator, validation_batches])
                             print "Intermediate accuracy accumulator reads", acc, "after", num_val_batches, "validation batches. validation loss accumulated:", v_loss
                         val_accuracy, val_summary, v_loss_summary = sess.run([eval_op, eval_summary_op, val_loss_summary_op])
