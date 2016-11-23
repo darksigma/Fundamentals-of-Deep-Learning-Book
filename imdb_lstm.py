@@ -126,16 +126,25 @@ if __name__ == '__main__':
                     # Compute average loss
                     avg_cost += new_cost/total_batch
                     print "Training cost for batch %d in epoch %d was:" % (i, epoch), new_cost
-                # Display logs per epoch step
-                if epoch % display_step == 0:
-                    print "Epoch:", '%04d' % (epoch+1), "cost =", "{:.9f}".format(avg_cost)
-                    val_x, val_y = data.val.minibatch(data.val.num_examples)
-                    val_accuracy, val_summary, val_loss_summary = sess.run([eval_op, eval_summary_op, val_loss_summary_op], feed_dict={x: val_x, y: val_y, phase_train: False})
-                    summary_writer.add_summary(val_summary, sess.run(global_step))
-                    summary_writer.add_summary(val_loss_summary, sess.run(global_step))
-                    print "Validation Accuracy:", val_accuracy
+                    if i % 100 == 0:
+                        print "Epoch:", '%04d' % (epoch+1), "Minibatch:", '%04d' % (i+1), "cost =", "{:.9f}".format((avg_cost * total_batch)/(i+1))
+                        val_x, val_y = data.val.minibatch(data.val.num_examples)
+                        val_accuracy, val_summary, val_loss_summary = sess.run([eval_op, eval_summary_op, val_loss_summary_op], feed_dict={x: val_x, y: val_y, phase_train: False})
+                        summary_writer.add_summary(val_summary, sess.run(global_step))
+                        summary_writer.add_summary(val_loss_summary, sess.run(global_step))
+                        print "Validation Accuracy:", val_accuracy
 
-                    saver.save(sess, "imdb_lstm_logs/model-checkpoint-" + '%04d' % (epoch+1), global_step=global_step)
+                        saver.save(sess, "imdb_lstm_logs/model-checkpoint-" + '%04d' % (epoch+1), global_step=global_step)
+                # Display logs per epoch step
+                # if epoch % display_step == 0:
+                #     print "Epoch:", '%04d' % (epoch+1), "cost =", "{:.9f}".format(avg_cost)
+                #     val_x, val_y = data.val.minibatch(data.val.num_examples)
+                #     val_accuracy, val_summary, val_loss_summary = sess.run([eval_op, eval_summary_op, val_loss_summary_op], feed_dict={x: val_x, y: val_y, phase_train: False})
+                #     summary_writer.add_summary(val_summary, sess.run(global_step))
+                #     summary_writer.add_summary(val_loss_summary, sess.run(global_step))
+                #     print "Validation Accuracy:", val_accuracy
+                #
+                #     saver.save(sess, "imdb_lstm_logs/model-checkpoint-" + '%04d' % (epoch+1), global_step=global_step)
 
 
             print "Optimization Finished!"
