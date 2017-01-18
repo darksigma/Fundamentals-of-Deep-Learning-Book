@@ -4,6 +4,10 @@
 data/word2vecdb
 data/twitter/tweetdb
 data/twitter/training.1600000.processed.noemoticon.csv
+dnc/data
+
+# babi saved model
+dnc/babi-model
 
 # Python
 *.pyc
