@@ -6,46 +6,11 @@ import tarfile
 import numpy as np
 from shutil import rmtree
 from os import listdir, mkdir
-from os.path import join, isfile, isdir, dirname, basename, normpath, abspath, exists, getsize
+from os.path import join, isfile, isdir, dirname, basename, normpath, realpath, exists, getsize
 
 def llprint(message):
     sys.stdout.write(message)
     sys.stdout.flush()
-
-def downlaod_data():
-    """
-    downlaods the tar ball containg the babi 10k data
-    """
-    url = "http://thespermwhale.com/jaseweston/babi/tasks_1-20_v1-2.tar.gz"
-    filename = "tasks_1-20_v1-2.tar.gz"
-
-    if not (exists(filename) and isfile(filename) and getsize(filename) == 11745123):
-        with open(filename, 'wb') as fobj:
-            request = urllib2.Request(url, headers={'User-Agent' : "Magic Browser"})
-            remote_file = urllib2.urlopen(request)
-            file_meta = remote_file.info()
-            file_size = float(file_meta.getheaders("Content-Length")[0]) / (1024. * 1024.)
-            llprint("\rDownloading Data ... 0/%.2f MB" % (file_size))
-
-            downlaoded_size = 0
-            while True:
-                block = remote_file.read(8192)
-                if not block:
-                    break
-                downlaoded_size += len(block) / (1024. * 1024.)
-                llprint("\rDownloading Data ... %.2f/%.2f MB" % (downlaoded_size, file_size))
-                fobj.write(block)
-
-    llprint("\rDownloading Data ... Done!         \n")
-
-def unzip_data():
-    """
-    extracts the data tarball
-    """
-    with tarfile.open("tasks_1-20_v1-2.tar.gz") as tarball:
-        llprint("Extracting Data ... ")
-        tarball.extractall()
-        llprint("Done!\n")
 
 
 def create_dictionary(files_list):
@@ -156,9 +121,9 @@ def encode_data(files_list, lexicons_dictionary, length_limit=None):
 
 
 if __name__ == '__main__':
-    task_dir = dirname(abspath(__file__))
+    task_dir = dirname(realpath(__file__))
     options,_ = getopt.getopt(sys.argv[1:], '', ['length_limit='])
-    data_dir = "tasks_1-20_v1-2/en-10k/"
+    data_dir = join(task_dir, "../data/babi-en-10k/")
     joint_train = True
     length_limit = None
     files_list = []
@@ -172,9 +137,6 @@ if __name__ == '__main__':
 
     """if data_dir is None:
         raise ValueError("data_dir argument cannot be None")"""
-
-    downlaod_data()
-    unzip_data()
 
     for entryname in listdir(data_dir):
         entry_path = join(data_dir, entryname)

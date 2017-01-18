@@ -48,11 +48,13 @@ def prepare_sample(sample, target_code, word_space_size):
         np.reshape(weights_vec, (-1, 1))
     )
 
-lexicon_dictionary = load("data/en-10k/lexicon-dict.pkl")
+task_dir = os.path.dirname(os.path.realpath(__file__))
+lexicon_dictionary = load(os.path.join(task_dir, "data/babi-en-10k/lexicon-dict.pkl"))
 test_files = []
 
-for entryname in os.listdir('data/en-10k/test/'):
-    entry_path = os.path.join('data/en-10k/test/', entryname)
+test_dir = os.path.join(task_dir, 'data/babi-en-10k/test/')
+for entryname in os.listdir(test_dir):
+    entry_path = os.path.join(test_dir, entryname)
     if os.path.isfile(entry_path):
         test_files.append(entry_path)
 
@@ -144,7 +146,7 @@ with graph.as_default():
 
     with tf.Session(graph=graph) as session:
 
-        tf.train.Saver().restore(session, './babi-model/model.ckpt')
+        tf.train.Saver().restore(session, os.path.join(task_dir, 'babi-model/model.ckpt'))
 
         tasks_results = {}
         tasks_names = {}

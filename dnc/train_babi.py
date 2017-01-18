@@ -45,9 +45,10 @@ def prepare_sample(sample, target_code, word_space_size):
         np.reshape(weights_vec, (-1, 1))
     )
 
+task_dir = os.path.dirname(os.path.realpath(__file__))
 llprint("Loading Data ... ")
-lexicon_dict = load("data/en-10k/lexicon-dict.pkl")
-data = load("data/en-10k/train/train.pkl")
+lexicon_dict = load(os.path.join(task_dir, "data/babi-en-10k/lexicon-dict.pkl"))
+data = load(os.path.join(task_dir, "data/babi-en-10k/train/train.pkl"))
 llprint("Done!\n")
 
 # the model parameters
@@ -182,7 +183,8 @@ with graph.as_default():
                 print "\n\tAvg. Cross-Entropy Loss: %.6f" % (np.mean(last_100_losses))
                 last_100_losses = []
 
-        if os.path.exists('./babi-model'):
-            shutil.rmtree('./babi-model')
-        os.mkdir('./babi-model')
-        tf.train.Saver().save(session, './babi-model/model.ckpt')
+        model_path =  os.path.join(task_dir, 'babi-model')
+        if os.path.exists(model_path):
+            shutil.rmtree(model_path)
+        os.mkdir(model_path)
+        tf.train.Saver().save(session, os.path.join(model_path, 'model.ckpt'))
