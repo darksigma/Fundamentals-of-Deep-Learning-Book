@@ -1,9 +1,9 @@
-import input_data
+from fdl_examples.datatools import input_data
 mnist = input_data.read_data_sets("data/", one_hot=True)
 
 import tensorflow as tf
 import numpy as np
-from multilayer_perceptron import inference, loss
+from fdl_examples.chapter3.multilayer_perceptron import inference, loss
 
 import matplotlib.pyplot as plt
 
@@ -47,7 +47,7 @@ feed_dict = {
 	y: mnist.test.labels,
 }
 
-print sess.run([cost_opt, cost_rand], feed_dict=feed_dict)
+print(sess.run([cost_opt, cost_rand], feed_dict=feed_dict))
 
 with tf.variable_scope("mlp_inter") as scope:
 

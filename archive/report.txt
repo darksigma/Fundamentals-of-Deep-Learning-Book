@@ -1,0 +1,46 @@
+--------------------------------------------------------------------------------
+Processing file 'linear_interpolation.py'
+ outputting to 'linear_interpolation_updated.py'
+--------------------------------------------------------------------------------
+
+'linear_interpolation.py' Line 40
+--------------------------------------------------------------------------------
+
+Renamed function 'tf.initialize_variables' to 'tf.variables_initializer'
+
+    Old: 	init_op = tf.initialize_variables(var_list_rand)
+                    ~~~~~~~~~~~~~~~~~~~~~~~                
+    New: 	init_op = tf.variables_initializer(var_list_rand)
+                    ~~~~~~~~~~~~~~~~~~~~~~~~                
+
+'linear_interpolation.py' Line 73
+--------------------------------------------------------------------------------
+
+Renamed function 'tf.merge_all_summaries' to 'tf.summary.merge_all'
+
+    Old: summary_op = tf.merge_all_summaries()
+                      ~~~~~~~~~~~~~~~~~~~~~~   
+    New: summary_op = tf.summary.merge_all()
+                      ~~~~~~~~~~~~~~~~~~~~   
+
+'linear_interpolation.py' Line 68
+--------------------------------------------------------------------------------
+
+Renamed function 'tf.scalar_summary' to 'tf.summary.scalar'
+
+    Old: 	tf.scalar_summary("interpolated_cost", cost_inter)
+          ~~~~~~~~~~~~~~~~~                                  
+    New: 	tf.summary.scalar("interpolated_cost", cost_inter)
+          ~~~~~~~~~~~~~~~~~                                  
+
+'linear_interpolation.py' Line 71
+--------------------------------------------------------------------------------
+
+Renamed function 'tf.train.SummaryWriter' to 'tf.summary.FileWriter'
+
+    Old: summary_writer = tf.train.SummaryWriter("linear_interp_logs/",
+                          ~~~~~~~~~~~~~~~~~~~~~~                        
+    New: summary_writer = tf.summary.FileWriter("linear_interp_logs/",
+                          ~~~~~~~~~~~~~~~~~~~~~                        
+
+

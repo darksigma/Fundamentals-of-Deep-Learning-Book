@@ -1,8 +1,8 @@
-import input_data
+from fdl_examples.datatools import input_data
 mnist = input_data.read_data_sets("data/", one_hot=True)
 
 import tensorflow as tf
-import time
+import time, shutil, os
 
 # Architecture
 n_hidden_1 = 256
@@ -54,6 +54,9 @@ def evaluate(output, y):
     return accuracy
 
 if __name__ == '__main__':
+    
+    if os.path.exists("mlp_logs/"):
+        shutil.rmtree("mlp_logs/")
 
     with tf.Graph().as_default():
 
@@ -104,11 +107,11 @@ if __name__ == '__main__':
                     avg_cost += sess.run(cost, feed_dict={x: minibatch_x, y: minibatch_y})/total_batch
                 # Display logs per epoch step
                 if epoch % display_step == 0:
-                    print "Epoch:", '%04d' % (epoch+1), "cost =", "{:.9f}".format(avg_cost)
+                    print("Epoch:", '%04d' % (epoch+1), "cost =", "{:.9f}".format(avg_cost))
 
                     accuracy = sess.run(eval_op, feed_dict={x: mnist.validation.images, y: mnist.validation.labels})
 
-                    print "Validation Error:", (1 - accuracy)
+                    print("Validation Error:", (1 - accuracy))
 
                     summary_str = sess.run(summary_op, feed_dict={x: minibatch_x, y: minibatch_y})
                     summary_writer.add_summary(summary_str, sess.run(global_step))
@@ -116,9 +119,9 @@ if __name__ == '__main__':
                     saver.save(sess, "mlp_logs/model-checkpoint", global_step=global_step)
 
 
-            print "Optimization Finished!"
+            print("Optimization Finished!")
 
 
             accuracy = sess.run(eval_op, feed_dict={x: mnist.test.images, y: mnist.test.labels})
 
-            print "Test Accuracy:", accuracy
+            print("Test Accuracy:", accuracy)
