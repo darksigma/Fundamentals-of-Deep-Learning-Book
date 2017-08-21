@@ -1,10 +1,7 @@
 # Data files
 *.gz
-# data/
-data/word2vecdb
-data/twitter/tweetdb
-data/twitter/training.1600000.processed.noemoticon.csv
-dnc/data
+data/
+!data/README.md
 
 # babi saved model
 dnc/babi-model
