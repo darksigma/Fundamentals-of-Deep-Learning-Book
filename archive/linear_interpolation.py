@@ -3,7 +3,7 @@ mnist = input_data.read_data_sets("data/", one_hot=True)
 
 import tensorflow as tf
 import numpy as np
-from fdl_examples.chapter3.multilayer_perceptron import inference, loss
+from fdl_examples.chapter3.multilayer_perceptron_updated import inference, loss
 
 import matplotlib.pyplot as plt
 
@@ -24,7 +24,7 @@ with tf.variable_scope("mlp_model") as scope:
 	var_list_opt = ["hidden_1/W", "hidden_1/b", "hidden_2/W", "hidden_2/b", "output/W", "output/b"]
 	var_list_opt = [tf.get_variable(v) for v in var_list_opt]
 
-	saver.restore(sess, "mlp_logs/model-checkpoint-550000")
+	saver.restore(sess, "model-checkpoint-547800")
 
 
 with tf.variable_scope("mlp_init") as scope:

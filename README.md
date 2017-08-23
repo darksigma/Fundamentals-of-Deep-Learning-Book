@@ -4,7 +4,7 @@ This repository is the code companion to [Fundamentals of Deep Learning](https:/
 
 ## Guide to the repository
 
-Due to recent changes in the Tensorflow library, specifically the migration to the 1.0 API version, the original code in this repository requires an update. If you are running a pre 1.0 version of Tensorflow, the original code files are contained in the `archive/` folder of this repository. We are now beginning the process of migrating this repository into the 1.0 version of Tensorflow and re-organizing the examples. This work is currently in progress and can be found in the `fdl_examples` folder. The current state of the migration is summarized here:
+Due to recent changes in the Tensorflow library, specifically the migration to the 1.0 API version, the original code in this repository requires an update. If you are running a pre 1.0 version of Tensorflow, the original code files are contained in the `archive/` folder of this repository. We are now beginning the process of migrating this repository into the 1.0 version of Tensorflow and re-organizing the examples. This work is currently in progress and can be found in the `fdl_examples/` folder. The current state of the migration is summarized here:
 
 * Chapter 3
   * Logistic regression (MNIST)
@@ -17,3 +17,4 @@ Due to recent changes in the Tensorflow library, specifically the migration to t
 * Chapter 8
 * Chapter 9
 
+## Setting up your development environment

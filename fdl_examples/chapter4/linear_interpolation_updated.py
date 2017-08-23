@@ -1,9 +1,9 @@
 from fdl_examples.datatools import input_data
-mnist = input_data.read_data_sets("data/", one_hot=True)
+mnist = input_data.read_data_sets("../../data/", one_hot=True)
 
 import tensorflow as tf
 import numpy as np
-from fdl_examples.chapter3.multilayer_perceptron import inference, loss
+from fdl_examples.chapter3.multilayer_perceptron_updated import inference, loss
 
 import matplotlib.pyplot as plt
 
@@ -12,19 +12,25 @@ sess = tf.Session()
 x = tf.placeholder("float", [None, 784]) # mnist data image of shape 28*28=784
 y = tf.placeholder("float", [None, 10]) # 0-9 digits recognition => 10 classes
 
-with tf.variable_scope("mlp_model") as scope:
+	
+saver = tf.train.import_meta_graph('frozen_mlp_checkpoint/model-checkpoint-547800.meta')
+saver.restore(sess, 'frozen_mlp_checkpoint/model-checkpoint-547800')
 
-	output_opt = inference(x)
-	cost_opt = loss(output_opt, y)
+var_list_opt = [None, None, None, None, None, None]
+name_2_index = {
+	"mlp_model/hidden_1/W:0" : 0,
+	"mlp_model/hidden_1/b:0" : 1,
+	"mlp_model/hidden_2/W:0" : 2,
+	"mlp_model/hidden_2/b:0" : 3,
+	"mlp_model/output/W:0" : 4,
+	"mlp_model/output/b:0" : 5
+}
 
-	saver = tf.train.Saver()
+for x in tf.trainable_variables():
+	if x.name in name_2_index:
+		index = name_2_index[x.name]
+		var_list_opt[index] = x
 
-	scope.reuse_variables()
-
-	var_list_opt = ["hidden_1/W", "hidden_1/b", "hidden_2/W", "hidden_2/b", "output/W", "output/b"]
-	var_list_opt = [tf.get_variable(v) for v in var_list_opt]
-
-	saver.restore(sess, "mlp_logs/model-checkpoint-550000")
 
 
 with tf.variable_scope("mlp_init") as scope:

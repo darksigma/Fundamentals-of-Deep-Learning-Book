@@ -1,5 +1,5 @@
 from fdl_examples.datatools import input_data
-mnist = input_data.read_data_sets("data/", one_hot=True)
+mnist = input_data.read_data_sets("../../data/", one_hot=True)
 
 import tensorflow as tf
 import time, shutil, os

@@ -3,7 +3,7 @@ mnist = input_data.read_data_sets("../../data/", one_hot=True)
 
 import tensorflow as tf
 import time, shutil, os
-
+from fdl_examples.chapter3.multilayer_perceptron import inference, loss
 
 # Parameters
 learning_rate = 0.01
