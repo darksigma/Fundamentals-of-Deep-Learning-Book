@@ -1,20 +1,11 @@
 # Fundamentals of Deep Learning
 
-This repository is the code companion to [Fundamentals of Deep Learning](https://www.amazon.com/Fundamentals-Deep-Learning-Next-Generation-Intelligence/dp/1491925612 "Fundamentals of Deep Learning") by [Nikhil Buduma](https://github.com/darksigma "Nikhil Buduma") and [Nicholas Locascio](https://github.com/nicholaslocascio "Nicholas Locascio"). Contributions to the text and code have also been made by [Mostafa Samir](https://github.com/Mostafa-Samir "Mostafa Samir"), [Surya Bhupatiraju](https://github.com/suryabhupa "Surya Bhupatiraju"), and [Anish Athalye](https://github.com/anishathalye "Anish Athalye"). All algorithms are implemented in [Tensorflow](https://www.tensorflow.org/ "Tensorflow"), Google's machine intelligence library.
+This repository is the code companion to [Fundamentals of Deep Learning, Second Edition](https://www.amazon.com/Fundamentals-Deep-Learning-Next-Generation-Intelligence/dp/1491925612 "Fundamentals of Deep Learning") by Nithin Buduma, [Nikhil Buduma](https://github.com/darksigma "Nikhil Buduma"), and [Joe Papa](https://github.com/joe-papa "Joe Papa"), with contributions from [Nicholas Locascio](https://github.com/nicholaslocascio "Nicholas Locascio"). Contributions to the text and code have also been made by [Mostafa Samir](https://github.com/Mostafa-Samir "Mostafa Samir"), [Surya Bhupatiraju](https://github.com/suryabhupa "Surya Bhupatiraju"), and [Anish Athalye](https://github.com/anishathalye "Anish Athalye"). All algorithms in the Second Edition are implemented in [PyTorch](https://www.pytorch.org/ "PyTorch"), one of the most popular machine learning frameworks.
 
 ## Guide to the repository
 
-Due to recent changes in the Tensorflow library, specifically the migration to the 1.0 API version, the original code in this repository requires an update. If you are running a pre 1.0 version of Tensorflow, the original code files are contained in the `archive/` folder of this repository. We are now beginning the process of migrating this repository into the 1.0 version of Tensorflow and re-organizing the examples. This work is currently in progress and can be found in the `fdl_examples/` folder. The current state of the migration is summarized here:
-
-* Chapter 3
-  * Logistic regression (MNIST)
-  * Multilayer perceptron (MNIST)
-* Chapter 4
-  * Linear interpolation of MLP network (MNIST) 
-* Chapter 5
-* Chapter 6
-* Chapter 7
-* Chapter 8
-* Chapter 9
+This repo contains code from the Second Edition of Fundamentals of Deep Learning, published in 2022. Code from the First Edition can be found in the first_edition folder. The code from each chapter of the Second Edition can be found in the corresponding Google Colab notebooks, if code exists in the chapter. In some cases, .py files have also been included to assist in faster reproduction of the examples.
 
 ## Setting up your development environment
+You can run the Google Colab notebooks directly from this github repo. [See instructions on Using Google Colab with GitHub here](https://colab.research.google.com/github/googlecolab/colabtools/blob/master/notebooks/colab-github-demo.ipynb "Using Google Colab with Github").
+

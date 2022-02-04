@@ -1,0 +1,2 @@
+Preparing WMT data in /hdfs/mscog/t-subhup/seq2seq/data
+Extracting tar file /hdfs/mscog/t-subhup/seq2seq/data/training-giga-fren.tar

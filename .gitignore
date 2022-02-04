@@ -14,3 +14,5 @@ dnc/babi-model
 
 # Logs
 *logs*/
+
+.ipynb_checkpoints
